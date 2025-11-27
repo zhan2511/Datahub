@@ -1,0 +1,474 @@
+openapi: 3.0.3
+info:
+  title: Research Collection System API
+  version: 1.0.0
+  description: API specification for research task collection system.
+
+servers:
+  - url: /api
+
+paths:
+  /users/signup:
+    post:
+      operationId: userSignUp
+      summary: User signup
+      description: Create a new user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSignUpRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /users/signin:
+    post:
+      operationId: userSignIn
+      summary: User signin
+      description: Authenticate user and return JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSignInRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSignInResponse"
+
+  /users/signout:
+    post:
+      operationId: userSignOut
+      summary: User signout
+      description: Sign out user.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /users/{user_id}:
+    get:
+      operationId: userDetail
+      summary: Get user detail
+      description: Query user detail.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDetailResponse"
+
+  /users/{user_id}/verify-role:
+    post:
+      operationId: userVerifyRole
+      summary: Verify user role
+      description: Verify and update user role.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserVerifyRoleRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /tasks:
+    post:
+      operationId: taskCreate
+      summary: Create task
+      description: Create a new collection task.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskCreateRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskCreateResponse"
+
+    get:
+      operationId: taskList
+      summary: Get task list
+      description: Query list of tasks.
+      parameters:
+        - in: query
+          name: page_num
+          schema: { type: integer }
+        - in: query
+          name: page_size
+          schema: { type: integer }
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: dept_ids
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - in: query
+          name: order_by
+          schema: { type: string }
+        - in: query
+          name: order_direction
+          schema: { type: string }
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskListResponse"
+
+  /tasks/{task_id}:
+    get:
+      operationId: taskDetail
+      summary: Get task detail
+      description: Query task detail.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskDetailResponse"
+
+    put:
+      operationId: taskUpdate
+      summary: Update task
+      description: Update task information.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskUpdateRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+    delete:
+      operationId: taskDelete
+      summary: Delete task
+      description: Remove a task.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /tasks/{task_id}/teachers:
+    get:
+      operationId: taskTeacherList
+      summary: Get teacher list by task
+      description: Query task teacher list with submission status.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: page_num
+          schema: { type: integer }
+        - in: query
+          name: page_size
+          schema: { type: integer }
+        - in: query
+          name: status
+          schema: { type: string }
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TaskTeacherListResponse"
+
+  /tasks/{task_id}/remind_teachers:
+    post:
+      operationId: remindUnsubmittedTeachers
+      summary: Remind unsubmitted teachers
+      description: Send reminder to teachers.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /tasks/{task_id}/submissions/export:
+    post:
+      operationId: exportTaskSubmissions
+      summary: Export submissions
+      description: Export all task submissions as file.
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: File response
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+
+  /departments:
+    get:
+      operationId: departmentList
+      summary: Get department list
+      description: Query all departments.
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepartmentListResponse"
+
+components:
+  schemas:
+
+    # ==================== USER ====================
+    UserSignUpRequest:
+      type: object
+      properties:
+        username: { type: string }
+        password: { type: string }
+        user_email: { type: string }
+        role: { type: string }
+      required: [username, password, user_email, role]
+
+    UserSignInRequest:
+      type: object
+      properties:
+        username: { type: string }
+        password: { type: string }
+      required: [username, password]
+
+    UserVerifyRoleRequest:
+      type: object
+      properties:
+        role: { type: string }
+        employee_id: { type: string }
+        assistant_name: { type: string }
+      required: [role, employee_id, assistant_name]
+
+    UserSignInResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            token: { type: string }
+            user:
+              type: object
+              properties:
+                user_id: { type: integer, format: int64 }
+                username: { type: string }
+                role: { type: string }
+
+    UserDetailResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                user_id: { type: integer, format: int64 }
+                username: { type: string }
+                user_email: { type: string }
+                role: { type: string }
+                assistant_id: { type: integer, format: int64 }
+
+    # ==================== TASK ====================
+    TaskCreateRequest:
+      type: object
+      properties:
+        task_name: { type: string }
+        description: { type: string }
+        template_path: { type: string }
+        deadline: { type: string, format: date-time }
+        dept_id: { type: integer, format: int64 }
+      required: [task_name, template_path, deadline, dept_id]
+
+    TaskUpdateRequest:
+      $ref: "#/components/schemas/TaskCreateRequest"
+
+    TaskCreateResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            task_id: { type: integer, format: int64 }
+
+    TaskListResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            tasks:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaskItem"
+            page:
+              $ref: "#/components/schemas/PageInfo"
+
+    TaskItem:
+      type: object
+      properties:
+        task_id: { type: integer, format: int64 }
+        task_name: { type: string }
+        description: { type: string }
+        template_path: { type: string }
+        deadline: { type: string, format: date-time }
+        status: { type: string }
+        create_time: { type: string, format: date-time }
+        department:
+          $ref: "#/components/schemas/DepartmentItem"
+
+    TaskDetailResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          $ref: "#/components/schemas/TaskItem"
+
+    TaskTeacherListResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            task_id: { type: integer, format: int64 }
+            teachers:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaskTeacherItem"
+            page:
+              $ref: "#/components/schemas/PageInfo"
+
+    TaskTeacherItem:
+      type: object
+      properties:
+        teacher_id: { type: integer, format: int64 }
+        teacher_name: { type: string }
+        teacher_email: { type: string }
+        submission:
+          $ref: "#/components/schemas/SubmissionStatusItem"
+
+    SubmissionStatusItem:
+      type: object
+      properties:
+        status: { type: string }
+        submitted_at: { type: string, format: date-time }
+        submission_id: { type: integer, format: int64 }
+
+    # ==================== DEPARTMENT ====================
+    DepartmentListResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            departments:
+              type: array
+              items:
+                $ref: "#/components/schemas/DepartmentItem"
+
+    DepartmentItem:
+      type: object
+      properties:
+        dept_id: { type: integer, format: int64 }
+        dept_name: { type: string }
+
+    # ==================== SHARED ====================
+    PageInfo:
+      type: object
+      properties:
+        total_pages: { type: integer }
+        page_num: { type: integer }
+        page_size: { type: integer }
+
+    SuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
