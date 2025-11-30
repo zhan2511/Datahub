@@ -1,4 +1,4 @@
-package org.example.datahub.common;
+package org.example.datahub.common.persistent;
 
 
 import jakarta.persistence.*;

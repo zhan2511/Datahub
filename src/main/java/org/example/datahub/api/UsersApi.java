@@ -5,12 +5,11 @@
  */
 package org.example.datahub.api;
 
-import org.example.datahub.model.SuccessResponseDTO;
 import org.example.datahub.model.UserDetailResponseDTO;
-import org.example.datahub.model.UserSignInRequestDTO;
-import org.example.datahub.model.UserSignInResponseDTO;
 import org.example.datahub.model.UserSignUpRequestDTO;
+import org.example.datahub.model.UserSignUpResponseDTO;
 import org.example.datahub.model.UserVerifyRoleRequestDTO;
+import org.example.datahub.model.UserVerifyRoleResponseDTO;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,7 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-28T04:05:34.377515333+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
 @Validated
 @Tag(name = "users", description = "the users API")
 public interface UsersApi {
@@ -71,62 +70,6 @@ public interface UsersApi {
 
 
     /**
-     * POST /users/signin : User signin
-     * Authenticate user and return JWT.
-     *
-     * @param userSignInRequestDTO  (required)
-     * @return Successful response (status code 200)
-     */
-    @Operation(
-        operationId = "userSignIn",
-        summary = "User signin",
-        description = "Authenticate user and return JWT.",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Successful response", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = UserSignInResponseDTO.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/users/signin",
-        produces = { "application/json" },
-        consumes = { "application/json" }
-    )
-    
-    ResponseEntity<UserSignInResponseDTO> userSignIn(
-        @Parameter(name = "UserSignInRequestDTO", description = "", required = true) @Valid @RequestBody UserSignInRequestDTO userSignInRequestDTO
-    );
-
-
-    /**
-     * POST /users/signout : User signout
-     * Sign out user.
-     *
-     * @return Successful response (status code 200)
-     */
-    @Operation(
-        operationId = "userSignOut",
-        summary = "User signout",
-        description = "Sign out user.",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Successful response", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponseDTO.class))
-            })
-        }
-    )
-    @RequestMapping(
-        method = RequestMethod.POST,
-        value = "/users/signout",
-        produces = { "application/json" }
-    )
-    
-    ResponseEntity<SuccessResponseDTO> userSignOut(
-        
-    );
-
-
-    /**
      * POST /users/signup : User signup
      * Create a new user.
      *
@@ -139,7 +82,7 @@ public interface UsersApi {
         description = "Create a new user.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Successful response", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponseDTO.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserSignUpResponseDTO.class))
             })
         }
     )
@@ -150,7 +93,7 @@ public interface UsersApi {
         consumes = { "application/json" }
     )
     
-    ResponseEntity<SuccessResponseDTO> userSignUp(
+    ResponseEntity<UserSignUpResponseDTO> userSignUp(
         @Parameter(name = "UserSignUpRequestDTO", description = "", required = true) @Valid @RequestBody UserSignUpRequestDTO userSignUpRequestDTO
     );
 
@@ -169,7 +112,7 @@ public interface UsersApi {
         description = "Verify and update user role.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Successful response", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponseDTO.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserVerifyRoleResponseDTO.class))
             })
         }
     )
@@ -180,7 +123,7 @@ public interface UsersApi {
         consumes = { "application/json" }
     )
     
-    ResponseEntity<SuccessResponseDTO> userVerifyRole(
+    ResponseEntity<UserVerifyRoleResponseDTO> userVerifyRole(
         @Parameter(name = "user_id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("user_id") Long userId,
         @Parameter(name = "UserVerifyRoleRequestDTO", description = "", required = true) @Valid @RequestBody UserVerifyRoleRequestDTO userVerifyRoleRequestDTO
     );

@@ -3,7 +3,7 @@ package org.example.datahub.task;
 
 
 import jakarta.persistence.*;
-import org.example.datahub.common.BaseEntity;
+import org.example.datahub.common.persistent.BaseEntity;
 
 import java.time.LocalDateTime;
 

@@ -16,30 +16,30 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserSignInRequestDTO
+ * UserLoginRequestDTO
  */
 
-@JsonTypeName("UserSignInRequest")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-28T04:05:34.377515333+08:00[Asia/Shanghai]")
-public class UserSignInRequestDTO {
+@JsonTypeName("UserLoginRequest")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+public class UserLoginRequestDTO {
 
   private String username;
 
   private String password;
 
-  public UserSignInRequestDTO() {
+  public UserLoginRequestDTO() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public UserSignInRequestDTO(String username, String password) {
+  public UserLoginRequestDTO(String username, String password) {
     this.username = username;
     this.password = password;
   }
 
-  public UserSignInRequestDTO username(String username) {
+  public UserLoginRequestDTO username(String username) {
     this.username = username;
     return this;
   }
@@ -59,7 +59,7 @@ public class UserSignInRequestDTO {
     this.username = username;
   }
 
-  public UserSignInRequestDTO password(String password) {
+  public UserLoginRequestDTO password(String password) {
     this.password = password;
     return this;
   }
@@ -87,9 +87,9 @@ public class UserSignInRequestDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserSignInRequestDTO userSignInRequest = (UserSignInRequestDTO) o;
-    return Objects.equals(this.username, userSignInRequest.username) &&
-        Objects.equals(this.password, userSignInRequest.password);
+    UserLoginRequestDTO userLoginRequest = (UserLoginRequestDTO) o;
+    return Objects.equals(this.username, userLoginRequest.username) &&
+        Objects.equals(this.password, userLoginRequest.password);
   }
 
   @Override
@@ -100,7 +100,7 @@ public class UserSignInRequestDTO {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserSignInRequestDTO {\n");
+    sb.append("class UserLoginRequestDTO {\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    password: ").append(toIndentedString(password)).append("\n");
     sb.append("}");

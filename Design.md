@@ -1,3 +1,11 @@
+# Design Document
+
+## 0. Introduction
+
+this is a design document for the project including:
++ [Entity](#1-entity)
++ [API](#2-api)
++ [Error Codes](#3-error-codes)
 
 ## 1. Entity
 
@@ -213,6 +221,7 @@
 
 ```
 
+<!--
 #### 2.1.2 Sign In
 
 + POST /users/signin
@@ -254,6 +263,7 @@
   "message": "User signed out successfully."
 }
 ```
+-->
 <!--
 #### 2.1.4 Change Password
 
@@ -306,7 +316,7 @@
 {
   "role": "ResearchAssistant",
   "employee_id": "123456",
-  "assistant_name": "Alice",
+  "assistant_name": "Alice"
 }
 ```
 | 字段         | 类型     | 必填  | 描述              |
@@ -324,7 +334,6 @@
   },
   "message": "Role verified successfully."
 }
-
 ```
 
 #### 2.1.7 Get User Detail
@@ -488,7 +497,7 @@
       "dept_name": "计算机科学与技术学院"
     },
     "status": "pending",
-    "create_time": "2023-01-01T00:00:00",
+    "create_time": "2023-01-01T00:00:00"
   }
 }
 ```
@@ -501,7 +510,6 @@
 {
   "page_num": 1,
   "page_size": 10
-  // "status": "Submitted",
 }
 ```
 | 字段       | 类型     | 必填  | 描述     |
@@ -713,8 +721,60 @@ Content-Disposition: attachment; filename="submissions.xlsx"
 
 ```
 
+### 2.5 Auth
 
+#### 2.5.1 Login
 
++ POST /auth/login
++ Request Body
+```json
+{
+  "username": "alice",
+  "password": "123456"
+}
+```
+| 字段       | 类型     | 必填  | 描述     |
+| -------- | ------ | --- | ------ |
+| username | string | Yes | 登录名     |
+| password | string | Yes | 明文密码（后端验证） |
++ Response
+```json
+{
+  "success": true,
+  "data": {
+    "token": "JWT_TOKEN_HERE",
+    "user": {
+      "user_id": 12,
+      "username": "alice",
+      "role": "Assistant"
+    }
+  },
+  "message": "User signed in successfully."
+}
 
+```
+<!-- frontend should handle token expiration and refresh -->
+<!--
+#### 2.5.2 Logout
 
++ POST /auth/logout
++ Response
+```json
+{
+  "success": true,
+  "message": "User signed out successfully."
+}
+```
+-->
 
+## 3. Error Codes
+
+| ERROR_CODE                 | HTTP_STATUS_CODE | Description |
+|----------------------------| ---------------- | ------- |
+| USER_NOT_FOUND             | 404 | User not found. |
+| INVALID_CREDENTIALS        | 401 | Invalid username or password. |
+| USER_EMAIL_ALREADY_EXISTS  | 400 | The provided email is already registered. |
+| USER_NAME_ALREADY_EXISTS   | 400 | The provided username is already taken. |
+| ASSISTANT_NOT_FOUND        | 404 | Assistant not found. |
+| TASK_NOT_FOUND             | 404 | Task not found. |
+| PERMISSION_DENIED          | 403 | Permission denied. |

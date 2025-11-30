@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.UserSignInResponseDataUserDTO;
+import org.example.datahub.model.UserLoginResponseDataUserDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,18 +17,18 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserSignInResponseDataDTO
+ * UserLoginResponseDataDTO
  */
 
-@JsonTypeName("UserSignInResponse_data")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-28T04:05:34.377515333+08:00[Asia/Shanghai]")
-public class UserSignInResponseDataDTO {
+@JsonTypeName("UserLoginResponse_data")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+public class UserLoginResponseDataDTO {
 
   private String token;
 
-  private UserSignInResponseDataUserDTO user;
+  private UserLoginResponseDataUserDTO user;
 
-  public UserSignInResponseDataDTO token(String token) {
+  public UserLoginResponseDataDTO token(String token) {
     this.token = token;
     return this;
   }
@@ -48,7 +48,7 @@ public class UserSignInResponseDataDTO {
     this.token = token;
   }
 
-  public UserSignInResponseDataDTO user(UserSignInResponseDataUserDTO user) {
+  public UserLoginResponseDataDTO user(UserLoginResponseDataUserDTO user) {
     this.user = user;
     return this;
   }
@@ -60,11 +60,11 @@ public class UserSignInResponseDataDTO {
   @Valid 
   @Schema(name = "user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("user")
-  public UserSignInResponseDataUserDTO getUser() {
+  public UserLoginResponseDataUserDTO getUser() {
     return user;
   }
 
-  public void setUser(UserSignInResponseDataUserDTO user) {
+  public void setUser(UserLoginResponseDataUserDTO user) {
     this.user = user;
   }
 
@@ -76,9 +76,9 @@ public class UserSignInResponseDataDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserSignInResponseDataDTO userSignInResponseData = (UserSignInResponseDataDTO) o;
-    return Objects.equals(this.token, userSignInResponseData.token) &&
-        Objects.equals(this.user, userSignInResponseData.user);
+    UserLoginResponseDataDTO userLoginResponseData = (UserLoginResponseDataDTO) o;
+    return Objects.equals(this.token, userLoginResponseData.token) &&
+        Objects.equals(this.user, userLoginResponseData.user);
   }
 
   @Override
@@ -89,7 +89,7 @@ public class UserSignInResponseDataDTO {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserSignInResponseDataDTO {\n");
+    sb.append("class UserLoginResponseDataDTO {\n");
     sb.append("    token: ").append(toIndentedString(token)).append("\n");
     sb.append("    user: ").append(toIndentedString(user)).append("\n");
     sb.append("}");

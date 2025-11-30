@@ -5,7 +5,8 @@
  */
 package org.example.datahub.api;
 
-import org.example.datahub.model.DepartmentListResponseDTO;
+import org.example.datahub.model.UserLoginRequestDTO;
+import org.example.datahub.model.UserLoginResponseDTO;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,33 +35,35 @@ import jakarta.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
 @Validated
-@Tag(name = "departments", description = "the departments API")
-public interface DepartmentsApi {
+@Tag(name = "auth", description = "the auth API")
+public interface AuthApi {
 
     /**
-     * GET /departments : Get department list
-     * Query all departments.
+     * POST /auth/login : User login
+     * Authenticate user and return JWT.
      *
+     * @param userLoginRequestDTO  (required)
      * @return Successful response (status code 200)
      */
     @Operation(
-        operationId = "departmentList",
-        summary = "Get department list",
-        description = "Query all departments.",
+        operationId = "userLogin",
+        summary = "User login",
+        description = "Authenticate user and return JWT.",
         responses = {
             @ApiResponse(responseCode = "200", description = "Successful response", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = DepartmentListResponseDTO.class))
+                @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginResponseDTO.class))
             })
         }
     )
     @RequestMapping(
-        method = RequestMethod.GET,
-        value = "/departments",
-        produces = { "application/json" }
+        method = RequestMethod.POST,
+        value = "/auth/login",
+        produces = { "application/json" },
+        consumes = { "application/json" }
     )
     
-    ResponseEntity<DepartmentListResponseDTO> departmentList(
-        
+    ResponseEntity<UserLoginResponseDTO> userLogin(
+        @Parameter(name = "UserLoginRequestDTO", description = "", required = true) @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO
     );
 
 }

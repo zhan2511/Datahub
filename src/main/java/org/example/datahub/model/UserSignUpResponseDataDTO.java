@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.UserDetailResponseDataUserDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,33 +16,33 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserDetailResponseDataDTO
+ * UserSignUpResponseDataDTO
  */
 
-@JsonTypeName("UserDetailResponse_data")
+@JsonTypeName("UserSignUpResponse_data")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
-public class UserDetailResponseDataDTO {
+public class UserSignUpResponseDataDTO {
 
-  private UserDetailResponseDataUserDTO user;
+  private Long userId;
 
-  public UserDetailResponseDataDTO user(UserDetailResponseDataUserDTO user) {
-    this.user = user;
+  public UserSignUpResponseDataDTO userId(Long userId) {
+    this.userId = userId;
     return this;
   }
 
   /**
-   * Get user
-   * @return user
+   * Get userId
+   * @return userId
   */
-  @Valid 
-  @Schema(name = "user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("user")
-  public UserDetailResponseDataUserDTO getUser() {
-    return user;
+  
+  @Schema(name = "user_id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("user_id")
+  public Long getUserId() {
+    return userId;
   }
 
-  public void setUser(UserDetailResponseDataUserDTO user) {
-    this.user = user;
+  public void setUserId(Long userId) {
+    this.userId = userId;
   }
 
   @Override
@@ -54,20 +53,20 @@ public class UserDetailResponseDataDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserDetailResponseDataDTO userDetailResponseData = (UserDetailResponseDataDTO) o;
-    return Objects.equals(this.user, userDetailResponseData.user);
+    UserSignUpResponseDataDTO userSignUpResponseData = (UserSignUpResponseDataDTO) o;
+    return Objects.equals(this.userId, userSignUpResponseData.userId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user);
+    return Objects.hash(userId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserDetailResponseDataDTO {\n");
-    sb.append("    user: ").append(toIndentedString(user)).append("\n");
+    sb.append("class UserSignUpResponseDataDTO {\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

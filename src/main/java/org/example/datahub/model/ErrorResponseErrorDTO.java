@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.UserDetailResponseDataUserDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,33 +16,55 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserDetailResponseDataDTO
+ * ErrorResponseErrorDTO
  */
 
-@JsonTypeName("UserDetailResponse_data")
+@JsonTypeName("ErrorResponse_error")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
-public class UserDetailResponseDataDTO {
+public class ErrorResponseErrorDTO {
 
-  private UserDetailResponseDataUserDTO user;
+  private String code;
 
-  public UserDetailResponseDataDTO user(UserDetailResponseDataUserDTO user) {
-    this.user = user;
+  private String message;
+
+  public ErrorResponseErrorDTO code(String code) {
+    this.code = code;
     return this;
   }
 
   /**
-   * Get user
-   * @return user
+   * Get code
+   * @return code
   */
-  @Valid 
-  @Schema(name = "user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("user")
-  public UserDetailResponseDataUserDTO getUser() {
-    return user;
+  
+  @Schema(name = "code", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("code")
+  public String getCode() {
+    return code;
   }
 
-  public void setUser(UserDetailResponseDataUserDTO user) {
-    this.user = user;
+  public void setCode(String code) {
+    this.code = code;
+  }
+
+  public ErrorResponseErrorDTO message(String message) {
+    this.message = message;
+    return this;
+  }
+
+  /**
+   * Get message
+   * @return message
+  */
+  
+  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("message")
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   @Override
@@ -54,20 +75,22 @@ public class UserDetailResponseDataDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserDetailResponseDataDTO userDetailResponseData = (UserDetailResponseDataDTO) o;
-    return Objects.equals(this.user, userDetailResponseData.user);
+    ErrorResponseErrorDTO errorResponseError = (ErrorResponseErrorDTO) o;
+    return Objects.equals(this.code, errorResponseError.code) &&
+        Objects.equals(this.message, errorResponseError.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user);
+    return Objects.hash(code, message);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserDetailResponseDataDTO {\n");
-    sb.append("    user: ").append(toIndentedString(user)).append("\n");
+    sb.append("class ErrorResponseErrorDTO {\n");
+    sb.append("    code: ").append(toIndentedString(code)).append("\n");
+    sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();
   }

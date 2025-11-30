@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.TaskTeacherListResponseDataDTO;
+import org.example.datahub.model.UserSignUpResponseDataDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,18 +17,20 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * TaskTeacherListResponseDTO
+ * UserSignUpResponseDTO
  */
 
-@JsonTypeName("TaskTeacherListResponse")
+@JsonTypeName("UserSignUpResponse")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
-public class TaskTeacherListResponseDTO {
+public class UserSignUpResponseDTO {
 
   private Boolean success;
 
-  private TaskTeacherListResponseDataDTO data;
+  private UserSignUpResponseDataDTO data;
 
-  public TaskTeacherListResponseDTO success(Boolean success) {
+  private String message;
+
+  public UserSignUpResponseDTO success(Boolean success) {
     this.success = success;
     return this;
   }
@@ -48,7 +50,7 @@ public class TaskTeacherListResponseDTO {
     this.success = success;
   }
 
-  public TaskTeacherListResponseDTO data(TaskTeacherListResponseDataDTO data) {
+  public UserSignUpResponseDTO data(UserSignUpResponseDataDTO data) {
     this.data = data;
     return this;
   }
@@ -60,12 +62,32 @@ public class TaskTeacherListResponseDTO {
   @Valid 
   @Schema(name = "data", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("data")
-  public TaskTeacherListResponseDataDTO getData() {
+  public UserSignUpResponseDataDTO getData() {
     return data;
   }
 
-  public void setData(TaskTeacherListResponseDataDTO data) {
+  public void setData(UserSignUpResponseDataDTO data) {
     this.data = data;
+  }
+
+  public UserSignUpResponseDTO message(String message) {
+    this.message = message;
+    return this;
+  }
+
+  /**
+   * Get message
+   * @return message
+  */
+  
+  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("message")
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   @Override
@@ -76,22 +98,24 @@ public class TaskTeacherListResponseDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TaskTeacherListResponseDTO taskTeacherListResponse = (TaskTeacherListResponseDTO) o;
-    return Objects.equals(this.success, taskTeacherListResponse.success) &&
-        Objects.equals(this.data, taskTeacherListResponse.data);
+    UserSignUpResponseDTO userSignUpResponse = (UserSignUpResponseDTO) o;
+    return Objects.equals(this.success, userSignUpResponse.success) &&
+        Objects.equals(this.data, userSignUpResponse.data) &&
+        Objects.equals(this.message, userSignUpResponse.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(success, data);
+    return Objects.hash(success, data, message);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TaskTeacherListResponseDTO {\n");
+    sb.append("class UserSignUpResponseDTO {\n");
     sb.append("    success: ").append(toIndentedString(success)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");
+    sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();
   }

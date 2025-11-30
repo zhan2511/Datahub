@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.TaskTeacherListResponseDataDTO;
+import org.example.datahub.model.ErrorResponseErrorDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,18 +17,18 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * TaskTeacherListResponseDTO
+ * ErrorResponseDTO
  */
 
-@JsonTypeName("TaskTeacherListResponse")
+@JsonTypeName("ErrorResponse")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
-public class TaskTeacherListResponseDTO {
+public class ErrorResponseDTO {
 
   private Boolean success;
 
-  private TaskTeacherListResponseDataDTO data;
+  private ErrorResponseErrorDTO error;
 
-  public TaskTeacherListResponseDTO success(Boolean success) {
+  public ErrorResponseDTO success(Boolean success) {
     this.success = success;
     return this;
   }
@@ -38,7 +38,7 @@ public class TaskTeacherListResponseDTO {
    * @return success
   */
   
-  @Schema(name = "success", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "success", example = "false", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("success")
   public Boolean getSuccess() {
     return success;
@@ -48,24 +48,24 @@ public class TaskTeacherListResponseDTO {
     this.success = success;
   }
 
-  public TaskTeacherListResponseDTO data(TaskTeacherListResponseDataDTO data) {
-    this.data = data;
+  public ErrorResponseDTO error(ErrorResponseErrorDTO error) {
+    this.error = error;
     return this;
   }
 
   /**
-   * Get data
-   * @return data
+   * Get error
+   * @return error
   */
   @Valid 
-  @Schema(name = "data", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("data")
-  public TaskTeacherListResponseDataDTO getData() {
-    return data;
+  @Schema(name = "error", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("error")
+  public ErrorResponseErrorDTO getError() {
+    return error;
   }
 
-  public void setData(TaskTeacherListResponseDataDTO data) {
-    this.data = data;
+  public void setError(ErrorResponseErrorDTO error) {
+    this.error = error;
   }
 
   @Override
@@ -76,22 +76,22 @@ public class TaskTeacherListResponseDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TaskTeacherListResponseDTO taskTeacherListResponse = (TaskTeacherListResponseDTO) o;
-    return Objects.equals(this.success, taskTeacherListResponse.success) &&
-        Objects.equals(this.data, taskTeacherListResponse.data);
+    ErrorResponseDTO errorResponse = (ErrorResponseDTO) o;
+    return Objects.equals(this.success, errorResponse.success) &&
+        Objects.equals(this.error, errorResponse.error);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(success, data);
+    return Objects.hash(success, error);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TaskTeacherListResponseDTO {\n");
+    sb.append("class ErrorResponseDTO {\n");
     sb.append("    success: ").append(toIndentedString(success)).append("\n");
-    sb.append("    data: ").append(toIndentedString(data)).append("\n");
+    sb.append("    error: ").append(toIndentedString(error)).append("\n");
     sb.append("}");
     return sb.toString();
   }

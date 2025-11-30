@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.UserSignInResponseDataDTO;
+import org.example.datahub.model.UserLoginResponseDataDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,18 +17,20 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserSignInResponseDTO
+ * UserLoginResponseDTO
  */
 
-@JsonTypeName("UserSignInResponse")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-28T04:05:34.377515333+08:00[Asia/Shanghai]")
-public class UserSignInResponseDTO {
+@JsonTypeName("UserLoginResponse")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+public class UserLoginResponseDTO {
 
   private Boolean success;
 
-  private UserSignInResponseDataDTO data;
+  private UserLoginResponseDataDTO data;
 
-  public UserSignInResponseDTO success(Boolean success) {
+  private String message;
+
+  public UserLoginResponseDTO success(Boolean success) {
     this.success = success;
     return this;
   }
@@ -48,7 +50,7 @@ public class UserSignInResponseDTO {
     this.success = success;
   }
 
-  public UserSignInResponseDTO data(UserSignInResponseDataDTO data) {
+  public UserLoginResponseDTO data(UserLoginResponseDataDTO data) {
     this.data = data;
     return this;
   }
@@ -60,12 +62,32 @@ public class UserSignInResponseDTO {
   @Valid 
   @Schema(name = "data", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("data")
-  public UserSignInResponseDataDTO getData() {
+  public UserLoginResponseDataDTO getData() {
     return data;
   }
 
-  public void setData(UserSignInResponseDataDTO data) {
+  public void setData(UserLoginResponseDataDTO data) {
     this.data = data;
+  }
+
+  public UserLoginResponseDTO message(String message) {
+    this.message = message;
+    return this;
+  }
+
+  /**
+   * Get message
+   * @return message
+  */
+  
+  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("message")
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   @Override
@@ -76,22 +98,24 @@ public class UserSignInResponseDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserSignInResponseDTO userSignInResponse = (UserSignInResponseDTO) o;
-    return Objects.equals(this.success, userSignInResponse.success) &&
-        Objects.equals(this.data, userSignInResponse.data);
+    UserLoginResponseDTO userLoginResponse = (UserLoginResponseDTO) o;
+    return Objects.equals(this.success, userLoginResponse.success) &&
+        Objects.equals(this.data, userLoginResponse.data) &&
+        Objects.equals(this.message, userLoginResponse.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(success, data);
+    return Objects.hash(success, data, message);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserSignInResponseDTO {\n");
+    sb.append("class UserLoginResponseDTO {\n");
     sb.append("    success: ").append(toIndentedString(success)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");
+    sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();
   }

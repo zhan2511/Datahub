@@ -16,12 +16,12 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserSignInResponseDataUserDTO
+ * UserLoginResponseDataUserDTO
  */
 
-@JsonTypeName("UserSignInResponse_data_user")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-28T04:05:34.377515333+08:00[Asia/Shanghai]")
-public class UserSignInResponseDataUserDTO {
+@JsonTypeName("UserLoginResponse_data_user")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+public class UserLoginResponseDataUserDTO {
 
   private Long userId;
 
@@ -29,7 +29,7 @@ public class UserSignInResponseDataUserDTO {
 
   private String role;
 
-  public UserSignInResponseDataUserDTO userId(Long userId) {
+  public UserLoginResponseDataUserDTO userId(Long userId) {
     this.userId = userId;
     return this;
   }
@@ -49,7 +49,7 @@ public class UserSignInResponseDataUserDTO {
     this.userId = userId;
   }
 
-  public UserSignInResponseDataUserDTO username(String username) {
+  public UserLoginResponseDataUserDTO username(String username) {
     this.username = username;
     return this;
   }
@@ -69,7 +69,7 @@ public class UserSignInResponseDataUserDTO {
     this.username = username;
   }
 
-  public UserSignInResponseDataUserDTO role(String role) {
+  public UserLoginResponseDataUserDTO role(String role) {
     this.role = role;
     return this;
   }
@@ -97,10 +97,10 @@ public class UserSignInResponseDataUserDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserSignInResponseDataUserDTO userSignInResponseDataUser = (UserSignInResponseDataUserDTO) o;
-    return Objects.equals(this.userId, userSignInResponseDataUser.userId) &&
-        Objects.equals(this.username, userSignInResponseDataUser.username) &&
-        Objects.equals(this.role, userSignInResponseDataUser.role);
+    UserLoginResponseDataUserDTO userLoginResponseDataUser = (UserLoginResponseDataUserDTO) o;
+    return Objects.equals(this.userId, userLoginResponseDataUser.userId) &&
+        Objects.equals(this.username, userLoginResponseDataUser.username) &&
+        Objects.equals(this.role, userLoginResponseDataUser.role);
   }
 
   @Override
@@ -111,7 +111,7 @@ public class UserSignInResponseDataUserDTO {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserSignInResponseDataUserDTO {\n");
+    sb.append("class UserLoginResponseDataUserDTO {\n");
     sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    username: ").append(toIndentedString(username)).append("\n");
     sb.append("    role: ").append(toIndentedString(role)).append("\n");

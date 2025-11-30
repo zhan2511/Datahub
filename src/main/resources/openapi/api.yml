@@ -8,6 +8,38 @@ servers:
   - url: /api
 
 paths:
+  /auth/login:
+    post:
+      operationId: userLogin
+      summary: User login
+      description: Authenticate user and return JWT.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginRequest"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginResponse"
+
+#  /auth/logout:
+#    post:
+#      operationId: userLogout
+#      summary: User logout
+#      description: Sign out user.
+#      responses:
+#        "200":
+#          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/SuccessResponse"
+
   /users/signup:
     post:
       operationId: userSignUp
@@ -25,39 +57,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SuccessResponse"
+                $ref: "#/components/schemas/UserSignUpResponse"
 
-  /users/signin:
-    post:
-      operationId: userSignIn
-      summary: User signin
-      description: Authenticate user and return JWT.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UserSignInRequest"
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserSignInResponse"
-
-  /users/signout:
-    post:
-      operationId: userSignOut
-      summary: User signout
-      description: Sign out user.
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResponse"
+#  /users/signin:
+#    post:
+#      operationId: userSignIn
+#      summary: User signin
+#      description: Authenticate user and return JWT.
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: "#/components/schemas/UserSignInRequest"
+#      responses:
+#        "200":
+#          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/UserSignInResponse"
+#
+#  /users/signout:
+#    post:
+#      operationId: userSignOut
+#      summary: User signout
+#      description: Sign out user.
+#      responses:
+#        "200":
+#          description: Successful response
+#          content:
+#            application/json:
+#              schema:
+#                $ref: "#/components/schemas/SuccessResponse"
 
   /users/{user_id}:
     get:
@@ -103,7 +135,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SuccessResponse"
+                $ref: "#/components/schemas/UserVerifyRoleResponse"
 
   /tasks:
     post:
@@ -295,33 +327,15 @@ paths:
 
 components:
   schemas:
-
-    # ==================== USER ====================
-    UserSignUpRequest:
-      type: object
-      properties:
-        username: { type: string }
-        password: { type: string }
-        user_email: { type: string }
-        role: { type: string }
-      required: [username, password, user_email, role]
-
-    UserSignInRequest:
+    # ==================== AUTH ====================
+    UserLoginRequest:
       type: object
       properties:
         username: { type: string }
         password: { type: string }
       required: [username, password]
 
-    UserVerifyRoleRequest:
-      type: object
-      properties:
-        role: { type: string }
-        employee_id: { type: string }
-        assistant_name: { type: string }
-      required: [role, employee_id, assistant_name]
-
-    UserSignInResponse:
+    UserLoginResponse:
       type: object
       properties:
         success: { type: boolean }
@@ -335,6 +349,57 @@ components:
                 user_id: { type: integer, format: int64 }
                 username: { type: string }
                 role: { type: string }
+        message: { type: string }
+
+    # ==================== USER ====================
+    UserSignUpRequest:
+      type: object
+      properties:
+        username: { type: string }
+        password: { type: string }
+        user_email: { type: string }
+        role: { type: string }
+      required: [username, password, user_email, role]
+
+#    UserSignInRequest:
+#      type: object
+#      properties:
+#        username: { type: string }
+#        password: { type: string }
+#      required: [username, password]
+
+    UserVerifyRoleRequest:
+      type: object
+      properties:
+        role: { type: string }
+        employee_id: { type: string }
+        assistant_name: { type: string }
+      required: [role, employee_id, assistant_name]
+
+    UserSignUpResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            user_id: { type: integer, format: int64 }
+        message: { type: string }
+
+#    UserSignInResponse:
+#      type: object
+#      properties:
+#        success: { type: boolean }
+#        data:
+#          type: object
+#          properties:
+#            token: { type: string }
+#            user:
+#              type: object
+#              properties:
+#                user_id: { type: integer, format: int64 }
+#                username: { type: string }
+#                role: { type: string }
 
     UserDetailResponse:
       type: object
@@ -351,6 +416,18 @@ components:
                 user_email: { type: string }
                 role: { type: string }
                 assistant_id: { type: integer, format: int64 }
+
+
+    UserVerifyRoleResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            role: { type: string }
+            assistant_id: { type: integer, format: int64 }
+        message: { type: string }
 
     # ==================== TASK ====================
     TaskCreateRequest:
@@ -472,3 +549,13 @@ components:
       properties:
         success: { type: boolean }
         message: { type: string }
+
+    ErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        error:
+          type: object
+          properties:
+            code: { type: string}
+            message: { type: string}

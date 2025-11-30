@@ -4,7 +4,7 @@ package org.example.datahub.department;
 
 
 import jakarta.persistence.*;
-import org.example.datahub.common.BaseEntity;
+import org.example.datahub.common.persistent.BaseEntity;
 
 //| 属性名 | 类型 | 约束 | 描述 |
 //| :--- | :---: | --- | --- |

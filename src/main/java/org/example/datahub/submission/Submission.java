@@ -2,7 +2,7 @@ package org.example.datahub.submission;
 
 
 import jakarta.persistence.*;
-import org.example.datahub.common.BaseEntity;
+import org.example.datahub.common.persistent.BaseEntity;
 
 import java.time.LocalDateTime;
 

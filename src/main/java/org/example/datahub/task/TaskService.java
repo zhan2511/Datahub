@@ -2,6 +2,7 @@ package org.example.datahub.task;
 
 
 
+import org.example.datahub.common.exception.ServiceException;
 import org.example.datahub.model.DepartmentItemDTO;
 import org.example.datahub.model.TaskItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,7 +77,11 @@ public class TaskService {
     }
 
     public Task getTask(Long taskId) {
-        return taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        return taskRepository.findById(taskId).orElseThrow(() -> new ServiceException(
+            "TASK_NOT_FOUND",
+            "Task not found",
+            org.springframework.http.HttpStatus.NOT_FOUND
+        ));
     }
 
     public Page<Task> listTasks(
@@ -103,8 +108,4 @@ public class TaskService {
             return taskRepository.findAllByCreatorIdAndStatusAndDeptIdIn(creatorId, status, deptIds, pageable);
         }
     }
-
-
-
-
 }
