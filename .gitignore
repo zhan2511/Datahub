@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# temporary test files added mamually
+test/
+
+# files uploaded to the server
+public/
+
 ### STS ###
 .apt_generated
 .classpath

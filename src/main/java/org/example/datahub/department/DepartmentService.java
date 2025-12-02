@@ -1,8 +1,7 @@
 package org.example.datahub.department;
 
 
-import org.example.datahub.model.DepartmentListResponseDTO;
-import org.jspecify.annotations.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +32,9 @@ public class DepartmentService {
 
     public List<Department> getDepartmentList() {
         return departmentRepository.findAll();
+    }
+
+    public void deleteDepartment(Long deptId1) {
+        departmentRepository.deleteById(deptId1);
     }
 }

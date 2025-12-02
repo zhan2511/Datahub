@@ -20,7 +20,7 @@ public class SubmissionService {
         Long taskId,
         Long teacherId,
         LocalDateTime submittedAt,
-        String attachmentPath,
+        Long attachmentFileId,
         String attachmentDescription
     ) {
         return submissionRepository.save(
@@ -28,7 +28,7 @@ public class SubmissionService {
                 taskId,
                 teacherId,
                 submittedAt,
-                attachmentPath,
+                attachmentFileId,
                 attachmentDescription
             )
         ).getId();

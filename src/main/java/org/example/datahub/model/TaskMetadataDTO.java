@@ -18,39 +18,36 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * TaskCreateRequestDTO
+ * TaskMetadataDTO
  */
 
-@JsonTypeName("TaskCreateRequest")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
-public class TaskCreateRequestDTO {
+@JsonTypeName("TaskMetadata")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
+public class TaskMetadataDTO {
 
   private String taskName;
 
   private String description;
-
-  private String templatePath;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime deadline;
 
   private Long deptId;
 
-  public TaskCreateRequestDTO() {
+  public TaskMetadataDTO() {
     super();
   }
 
   /**
    * Constructor with only required parameters
    */
-  public TaskCreateRequestDTO(String taskName, String templatePath, OffsetDateTime deadline, Long deptId) {
+  public TaskMetadataDTO(String taskName, OffsetDateTime deadline, Long deptId) {
     this.taskName = taskName;
-    this.templatePath = templatePath;
     this.deadline = deadline;
     this.deptId = deptId;
   }
 
-  public TaskCreateRequestDTO taskName(String taskName) {
+  public TaskMetadataDTO taskName(String taskName) {
     this.taskName = taskName;
     return this;
   }
@@ -70,7 +67,7 @@ public class TaskCreateRequestDTO {
     this.taskName = taskName;
   }
 
-  public TaskCreateRequestDTO description(String description) {
+  public TaskMetadataDTO description(String description) {
     this.description = description;
     return this;
   }
@@ -90,27 +87,7 @@ public class TaskCreateRequestDTO {
     this.description = description;
   }
 
-  public TaskCreateRequestDTO templatePath(String templatePath) {
-    this.templatePath = templatePath;
-    return this;
-  }
-
-  /**
-   * Get templatePath
-   * @return templatePath
-  */
-  @NotNull 
-  @Schema(name = "template_path", requiredMode = Schema.RequiredMode.REQUIRED)
-  @JsonProperty("template_path")
-  public String getTemplatePath() {
-    return templatePath;
-  }
-
-  public void setTemplatePath(String templatePath) {
-    this.templatePath = templatePath;
-  }
-
-  public TaskCreateRequestDTO deadline(OffsetDateTime deadline) {
+  public TaskMetadataDTO deadline(OffsetDateTime deadline) {
     this.deadline = deadline;
     return this;
   }
@@ -130,7 +107,7 @@ public class TaskCreateRequestDTO {
     this.deadline = deadline;
   }
 
-  public TaskCreateRequestDTO deptId(Long deptId) {
+  public TaskMetadataDTO deptId(Long deptId) {
     this.deptId = deptId;
     return this;
   }
@@ -158,26 +135,24 @@ public class TaskCreateRequestDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    TaskCreateRequestDTO taskCreateRequest = (TaskCreateRequestDTO) o;
-    return Objects.equals(this.taskName, taskCreateRequest.taskName) &&
-        Objects.equals(this.description, taskCreateRequest.description) &&
-        Objects.equals(this.templatePath, taskCreateRequest.templatePath) &&
-        Objects.equals(this.deadline, taskCreateRequest.deadline) &&
-        Objects.equals(this.deptId, taskCreateRequest.deptId);
+    TaskMetadataDTO taskMetadata = (TaskMetadataDTO) o;
+    return Objects.equals(this.taskName, taskMetadata.taskName) &&
+        Objects.equals(this.description, taskMetadata.description) &&
+        Objects.equals(this.deadline, taskMetadata.deadline) &&
+        Objects.equals(this.deptId, taskMetadata.deptId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(taskName, description, templatePath, deadline, deptId);
+    return Objects.hash(taskName, description, deadline, deptId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TaskCreateRequestDTO {\n");
+    sb.append("class TaskMetadataDTO {\n");
     sb.append("    taskName: ").append(toIndentedString(taskName)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    templatePath: ").append(toIndentedString(templatePath)).append("\n");
     sb.append("    deadline: ").append(toIndentedString(deadline)).append("\n");
     sb.append("    deptId: ").append(toIndentedString(deptId)).append("\n");
     sb.append("}");

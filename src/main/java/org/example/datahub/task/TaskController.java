@@ -6,6 +6,8 @@ import org.example.datahub.auth.JwtFilter;
 import org.example.datahub.common.exception.ServiceException;
 import org.example.datahub.department.Department;
 import org.example.datahub.department.DepartmentService;
+import org.example.datahub.file.File;
+import org.example.datahub.file.FileService;
 import org.example.datahub.model.*;
 import org.example.datahub.submission.Submission;
 import org.example.datahub.submission.SubmissionService;
@@ -20,18 +22,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 
 @RestController
+@RequestMapping("/api")
 public class TaskController implements TasksApi {
     private final TaskService taskService;
     private final TeacherService teacherService;
     private final SubmissionService submissionService;
     private final DepartmentService departmentService;
     private final UserService userService;
+    private final FileService fileService;
 
     @Autowired
     public TaskController(
@@ -39,13 +44,15 @@ public class TaskController implements TasksApi {
         TeacherService teacherService,
         SubmissionService submissionService,
         DepartmentService departmentService,
-        UserService userService
+        UserService userService,
+        FileService fileService
     ) {
         this.taskService = taskService;
         this.teacherService = teacherService;
         this.submissionService = submissionService;
         this.departmentService = departmentService;
         this.userService = userService;
+        this.fileService = fileService;
     }
 
 
@@ -63,23 +70,24 @@ public class TaskController implements TasksApi {
     }
 
     @Override
-    public ResponseEntity<TaskCreateResponseDTO> taskCreate(TaskCreateRequestDTO taskCreateRequestDTO) {
+    public ResponseEntity<TaskCreateResponseDTO> taskCreate(TaskMetadataDTO metadata, MultipartFile templateFile) {
         Long currentUserId = JwtFilter.getCurrentUserId();
         String currentUserRole = userService.getUserById(currentUserId).getRole();
-        if (!"Administrator".equals(currentUserRole) && !"ResearcherAssistant".equals(currentUserRole)) {
+        if (!"Administrator".equals(currentUserRole) && !"Assistant".equals(currentUserRole)) {
             throw new ServiceException(
                 "PERMISSION_DENIED",
                 "You don't have permission to create a task",
                 HttpStatus.FORBIDDEN
             );
         }
+        File uploadedFile = fileService.saveFile(currentUserId, templateFile);
         Long taskId = taskService.createTask(
-            taskCreateRequestDTO.getTaskName(),
-            taskCreateRequestDTO.getDescription(),
-            taskCreateRequestDTO.getTemplatePath(),
-            taskCreateRequestDTO.getDeptId(),
+            metadata.getTaskName(),
+            metadata.getDescription(),
+            uploadedFile.getId(),
+            metadata.getDeptId(),
             currentUserId,
-            taskCreateRequestDTO.getDeadline().toLocalDateTime(),
+            metadata.getDeadline().toLocalDateTime(),
             "Ongoing"
         );
         return ResponseEntity.ok(new TaskCreateResponseDTO()
@@ -102,6 +110,7 @@ public class TaskController implements TasksApi {
                 HttpStatus.FORBIDDEN
             );
         }
+        fileService.deleteFile(taskService.getTask(taskId).getTemplateFileId());
         taskService.deleteTask(taskId);
         return ResponseEntity.ok(new SuccessResponseDTO()
             .success(true)
@@ -128,7 +137,7 @@ public class TaskController implements TasksApi {
                 .taskId(task.getId())
                 .taskName(task.getTaskName())
                 .description(task.getDescription())
-                .templatePath(task.getTemplatePath())
+                .templateFileId(task.getTemplateFileId())
                 .deadline(task.getDeadline().atOffset(ZoneOffset.UTC))
                 .status(task.getStatus())
                 .createTime(task.getCreateTime().atOffset(ZoneOffset.UTC))
@@ -159,7 +168,7 @@ public class TaskController implements TasksApi {
                 .taskId(task.getId())
                 .taskName(task.getTaskName())
                 .description(task.getDescription())
-                .templatePath(task.getTemplatePath())
+                .templateFileId(task.getTemplateFileId())
                 .deadline(task.getDeadline().atOffset(ZoneOffset.UTC))
                 .status(task.getStatus())
                 .createTime(task.getCreateTime().atOffset(ZoneOffset.UTC))
@@ -223,15 +232,17 @@ public class TaskController implements TasksApi {
             .filter(Objects::nonNull)
             .toList();
 
+        int pageNumValue = (pageNum != null && pageNum >= 0) ? pageNum : 0;
+        int pageSizeValue = (pageSize != null && pageSize >= 1) ? pageSize : 10;
         int total = filteredList.size();
-        int fromIndex = Math.min((pageNum - 1) * pageSize, total);
-        int toIndex = Math.min(fromIndex + pageSize, total);
+        int fromIndex = Math.min((pageNumValue) * pageSizeValue, total);
+        int toIndex = Math.min(fromIndex + pageSizeValue, total);
         List<TaskTeacherItemDTO> pageList = filteredList.subList(fromIndex, toIndex);
 
         PageInfoDTO pageInfo = new PageInfoDTO()
-            .pageNum(pageNum)
-            .pageSize(pageSize)
-            .totalPages((int) Math.ceil((double) total / pageSize));
+            .pageNum(pageNumValue)
+            .pageSize(pageSizeValue)
+            .totalPages((int) Math.ceil((double) total / pageSizeValue));
 
         return ResponseEntity.ok(new TaskTeacherListResponseDTO()
             .success(true)
@@ -243,13 +254,12 @@ public class TaskController implements TasksApi {
         );
     }
 
-
-
     @Override
-    public ResponseEntity<SuccessResponseDTO> taskUpdate(Long taskId, TaskCreateRequestDTO taskCreateRequestDTO) {
+    public ResponseEntity<SuccessResponseDTO> taskUpdate(Long taskId, TaskMetadataDTO metadata, MultipartFile templateFile) {
         Long currentUserId = JwtFilter.getCurrentUserId();
         String currentUserRole = userService.getUserById(currentUserId).getRole();
-        Long taskOwner = taskService.getTask(taskId).getCreatorId();
+        Task task = taskService.getTask(taskId);
+        Long taskOwner = task.getCreatorId();
         if (!"Administrator".equals(currentUserRole) && !currentUserId.equals(taskOwner)) {
             throw new ServiceException(
                 "PERMISSION_DENIED",
@@ -257,13 +267,19 @@ public class TaskController implements TasksApi {
                 HttpStatus.FORBIDDEN
             );
         }
+        Long uploadedFileId = task.getTemplateFileId();
+        if (templateFile != null && !templateFile.isEmpty()) {
+            File uploadedFile = fileService.saveFile(currentUserId, templateFile);
+            fileService.deleteFile(uploadedFileId);
+            uploadedFileId = uploadedFile.getId();
+        }
         taskService.updateTask(
             taskId,
-            taskCreateRequestDTO.getTaskName(),
-            taskCreateRequestDTO.getDescription(),
-            taskCreateRequestDTO.getTemplatePath(),
-            taskCreateRequestDTO.getDeptId(),
-            taskCreateRequestDTO.getDeadline().toLocalDateTime(),
+            metadata.getTaskName(),
+            metadata.getDescription(),
+            uploadedFileId,
+            metadata.getDeptId(),
+            metadata.getDeadline().toLocalDateTime(),
             "Ongoing"
         );
         return ResponseEntity.ok(new SuccessResponseDTO()

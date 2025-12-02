@@ -2,6 +2,7 @@ package org.example.datahub.assistant;
 
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
 
 //| 属性名 | 类型 | 约束 | 描述 |
 //| :--- | :---: | --- | --- |
@@ -12,6 +13,7 @@ import org.example.datahub.common.persistent.BaseEntity;
 
 @Entity
 @Table(name = "assistants")
+@SQLDelete(sql = "UPDATE assistants SET deleted_at = CURRENT_TIMESTAMP, assistant_email = CONCAT(assistant_email, '_deleted_', id) WHERE id = ?")
 public class Assistant extends BaseEntity {
     @Column(name = "employee_id", unique = true, nullable = false)
     String employeeId;

@@ -6,10 +6,10 @@
 package org.example.datahub.api;
 
 import org.example.datahub.model.SuccessResponseDTO;
-import org.example.datahub.model.TaskCreateRequestDTO;
 import org.example.datahub.model.TaskCreateResponseDTO;
 import org.example.datahub.model.TaskDetailResponseDTO;
 import org.example.datahub.model.TaskListResponseDTO;
+import org.example.datahub.model.TaskMetadataDTO;
 import org.example.datahub.model.TaskTeacherListResponseDTO;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
 @Validated
 @Tag(name = "tasks", description = "the tasks API")
 public interface TasksApi {
@@ -102,7 +102,8 @@ public interface TasksApi {
      * POST /tasks : Create task
      * Create a new collection task.
      *
-     * @param taskCreateRequestDTO  (required)
+     * @param metadata  (required)
+     * @param templateFile  (required)
      * @return Successful response (status code 200)
      */
     @Operation(
@@ -119,11 +120,12 @@ public interface TasksApi {
         method = RequestMethod.POST,
         value = "/tasks",
         produces = { "application/json" },
-        consumes = { "application/json" }
+        consumes = { "multipart/form-data" }
     )
     
     ResponseEntity<TaskCreateResponseDTO> taskCreate(
-        @Parameter(name = "TaskCreateRequestDTO", description = "", required = true) @Valid @RequestBody TaskCreateRequestDTO taskCreateRequestDTO
+        @Parameter(name = "metadata", description = "", required = true) @Valid @RequestPart(value = "metadata", required = true) TaskMetadataDTO metadata,
+        @Parameter(name = "template_file", description = "", required = true) @RequestPart(value = "template_file", required = true) MultipartFile templateFile
     );
 
 
@@ -260,7 +262,8 @@ public interface TasksApi {
      * Update task information.
      *
      * @param taskId  (required)
-     * @param body  (optional)
+     * @param metadata  (required)
+     * @param templateFile  (optional)
      * @return Successful response (status code 200)
      */
     @Operation(
@@ -277,12 +280,13 @@ public interface TasksApi {
         method = RequestMethod.PUT,
         value = "/tasks/{task_id}",
         produces = { "application/json" },
-        consumes = { "application/json" }
+        consumes = { "multipart/form-data" }
     )
     
     ResponseEntity<SuccessResponseDTO> taskUpdate(
         @Parameter(name = "task_id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("task_id") Long taskId,
-        @Parameter(name = "body", description = "") @Valid @RequestBody(required = false) TaskCreateRequestDTO body
+        @Parameter(name = "metadata", description = "", required = true) @Valid @RequestPart(value = "metadata", required = true) TaskMetadataDTO metadata,
+        @Parameter(name = "template_file", description = "") @RequestPart(value = "template_file", required = false) MultipartFile templateFile
     );
 
 }

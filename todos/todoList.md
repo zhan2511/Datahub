@@ -10,6 +10,9 @@ But it is more to show the remaining problems in this project.**
 
 1. Add a scheduler to check for TaskRepository if there are any tasks due today.
 
+<!--
 2. Add Authentication and Authorization to the application.
+-->
 
+3. Add cloud storage for file attachments.
 

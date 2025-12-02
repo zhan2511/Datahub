@@ -145,9 +145,18 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/TaskCreateRequest"
+              type: object
+              properties:
+                metadata:
+                  $ref: "#/components/schemas/TaskMetadata"
+                template_file:
+                  type: string
+                  format: binary
+              required:
+                - metadata
+                - template_file
       responses:
         "200":
           description: Successful response
@@ -219,10 +228,19 @@ paths:
           required: true
           schema: { type: integer, format: int64 }
       requestBody:
+        required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/TaskUpdateRequest"
+              type: object
+              properties:
+                metadata:
+                  $ref: "#/components/schemas/TaskMetadata"
+                template_file:
+                  type: string
+                  format: binary
+              required:
+                - metadata
       responses:
         "200":
           description: Successful response
@@ -230,6 +248,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
+
 
     delete:
       operationId: taskDelete
@@ -374,7 +393,8 @@ components:
         role: { type: string }
         employee_id: { type: string }
         assistant_name: { type: string }
-      required: [role, employee_id, assistant_name]
+        email_app_password: { type: string }
+      required: [role, employee_id, assistant_name, email_app_password]
 
     UserSignUpResponse:
       type: object
@@ -430,18 +450,14 @@ components:
         message: { type: string }
 
     # ==================== TASK ====================
-    TaskCreateRequest:
+    TaskMetadata:
       type: object
       properties:
         task_name: { type: string }
         description: { type: string }
-        template_path: { type: string }
         deadline: { type: string, format: date-time }
         dept_id: { type: integer, format: int64 }
-      required: [task_name, template_path, deadline, dept_id]
-
-    TaskUpdateRequest:
-      $ref: "#/components/schemas/TaskCreateRequest"
+      required: [ task_name, deadline, dept_id ]
 
     TaskCreateResponse:
       type: object
@@ -472,7 +488,7 @@ components:
         task_id: { type: integer, format: int64 }
         task_name: { type: string }
         description: { type: string }
-        template_path: { type: string }
+        template_file_id: { type: integer, format: int64 }
         deadline: { type: string, format: date-time }
         status: { type: string }
         create_time: { type: string, format: date-time }
@@ -515,6 +531,7 @@ components:
       properties:
         status: { type: string }
         submitted_at: { type: string, format: date-time }
+        attachment_file_id: { type: integer, format: int64 }
         submission_id: { type: integer, format: int64 }
 
     # ==================== DEPARTMENT ====================

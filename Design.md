@@ -17,9 +17,9 @@ this is a design document for the project including:
 | username | 字符串 | 唯一 (UNIQUE) | 用于登录，不能重复 |
 | password_hash | 字符串 | 必填 (NOT NULL) | 存储密码的加密值 |
 | user_email | 字符串 | 唯一 (UNIQUE) | 用于找回密码或通知，不能重复 |
-| role | 字符串 | 必填 (NOT NULL), CHECK IN（'管理员'（Administrator）, '科研秘书'（ResearchAssistant）, '教师'（Teacher）, '游客'（Guest）） | 身份/角色 |
+| role | 字符串 | 必填 (NOT NULL), CHECK IN（'管理员'（Administrator）, '科研秘书'（Assistant）, '教师'（Teacher）, '游客'（Guest）） | 身份/角色 |
 | teacher_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $Teacher$ 表。UNIQUE 约束保证一个教师身份只能被一个用户账户绑定。 |
-| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $ResearchAssistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
+| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $Assistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
 | last_login_time | 时间戳 | 可空 (NULLABLE) | 最后登录时间 | -->
 
 ### 1.1 User
@@ -30,8 +30,8 @@ this is a design document for the project including:
 | username | 字符串 | 唯一 (UNIQUE) | 用于登录，不能重复 |
 | password_hash | 字符串 | 必填 (NOT NULL) | 存储密码的加密值 |
 | user_email | 字符串 | 唯一 (UNIQUE) | 用于找回密码或通知，不能重复 |
-| role | 字符串 | 必填 (NOT NULL), CHECK IN（'管理员'（Administrator）, '科研秘书'（ResearchAssistant）, '游客'（Guest）） | 身份/角色 |
-| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $ResearchAssistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
+| role | 字符串 | 必填 (NOT NULL), CHECK IN（'管理员'（Administrator）, '科研秘书'（Assistant）, '游客'（Guest）） | 身份/角色 |
+| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $Assistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
 
 ### 1.2 Teacher
 
@@ -43,7 +43,7 @@ this is a design document for the project including:
 | teacher_email | 字符串 | 唯一 (UNIQUE) | 教师邮箱地址 |
 | dept_id | 整数 | 外键 (FK) | 指向 $Department$ 表 |
 
-### 1.3 ResearchAssistant
+### 1.3 Assistant
 
 | 属性名 | 类型 | 约束 | 描述 |
 | :--- | :---: | --- | --- |
@@ -51,6 +51,7 @@ this is a design document for the project including:
 | employee_id | 字符串 | 唯一 (UNIQUE)，必填 (NOT NULL) | 科研秘书工号 |
 | assistant_name | 字符串 | 必填 (NOT NULL) | 科研秘书姓名 |
 | assistant_email | 字符串 | 唯一 (UNIQUE) | 科研秘书邮箱地址 |
+| email_app_password | 字符串 | 可空 (NULLABLE) | 用于发送邮件的应用专用密码 |
 
 
 ### 1.4 Department
@@ -58,8 +59,7 @@ this is a design document for the project including:
 | 属性名 | 类型 | 约束 | 描述 |
 | :--- | :---: | --- | --- |
 | dept_id | 整数 | 主键 (PK) | 唯一标识一个系 |
-| dept_name | 字符串 | 必填 (NOT NULL) | 系名 |
-
+| dept_name | 字符串 | 唯一 (UNIQUE), 必填 (NOT NULL) | 系名 |
 
 ### 1.5 CollectionTask
 
@@ -68,25 +68,38 @@ this is a design document for the project including:
 | task_id | 整数 | 主键 (PK) | 唯一标识一个汇总任务 |
 | task_name | 字符串 | 唯一 (UNIQUE) | 任务名称 |
 | description | 字符串 | 可空 (NULLABLE) | 任务描述 |
-| template_path | 字符串 | 必填 (NOT NULL) | Excel模板文件存储路径 |
+| template_file_id | 整数 | 外键 (FK) | 指向 $File$ 表，存储模板文件信息 |
 | dept_id | 整数 | 外键 (FK) | 指向 $Department$ 表 |
-| creator_id | 整数 | 外键 (FK) | 指向 $ResearchAssistant$ 表 |
+| creator_id | 整数 | 外键 (FK) | 指向 $Assistant$ 表 |
 | create_time | 时间戳 | 必填 (NOT NULL) | 任务创建时间 |
 | deadline | 时间戳 | 必填 (NOT NULL) | 截止日期 |
 | status | 字符串 | 必填 (NOT NULL), CHECK IN（'已完成-Finished', '正在进行-Ongoing'） | 任务状态 |
 
 ### 1.6 Submission
 
-| 属性名 | 类型 | 约束 | 描述 |
-| :--- | :---: | --- | --- |
-| submission_id | 整数 | 主键 (PK) | 唯一标识一个提交 |
-| task_id | 整数 | 外键 (FK) | 指向 $CollectionTask$ 表 |
-| teacher_id | 整数 | 外键 (FK) | 指向 $Teacher$ 表 |
-| submitted_at | 时间戳 | 可空 (NULLABLE) | 提交时间 |
-| attachment_path | 字符串 | 可空 (NULLABLE) | 教师回复的附件存储路径 |
+| 属性名                    | 类型 | 约束           | 描述 |
+|:-----------------------| :---: |--------------| -- |
+| submission_id          | 整数 | 主键 (PK)      | 唯一标识一个提交 |
+| task_id                | 整数 | 外键 (FK)      | 指向 $CollectionTask$ 表 |
+| teacher_id             | 整数 | 外键 (FK)      | 指向 $Teacher$ 表 |
+| submitted_at           | 时间戳 | 可空 (NULLABLE) | 提交时间 |
+| attachment_file_id     | 整数 | 外键 (FK), 可空 (NULLABLE) | 指向 $File$ 表，存储教师提交的附件信息 |
 | attachment_description | 字符串 | 可空 (NULLABLE) | 教师回复的附件描述 |
 
-### 1.7 E-R
+
+### 1.7 File
+| 属性名        | 类型            | 约束     | 描述                      |
+| ---------- | ------------- | ------ | ----------------------- |
+| file_id    | bigint  | 主键，非空  | 文件记录唯一标识                |
+| owner_id   | bigint  | 外键，非空  | 上传该文件的用户 ID             |
+| original_file_name  | varchar(255)  | 非空     | 原始文件名
+| saved_file_name     | varchar(255)  | 非空     | 存储在服务器上的文件名    |
+| file_path  | varchar(500)  | 非空     | 文件在服务器/存储中的路径         |
+| file_size  | bigint        | 非空     | 文件大小（字节）                |
+| mime_type  | varchar(100)  | 非空     | 文件的 MIME 类型（如 image/png） |
+
+
+### 1.8 E-R
 
 ```
                       1        N
@@ -107,7 +120,7 @@ this is a design document for the project including:
                 | task_id (PK)                 |
                 | task_name (UNIQUE)           |
                 | description                  |
-                | template_path                |
+                | template_file_id             |
                 | dept_id (FK)                 |
                 | creator_id (FK)              |
                 | create_time                  |
@@ -119,12 +132,13 @@ this is a design document for the project including:
                          |
                          | 1
                 +-----------------------+
-                |  ResearchAssistant    |
+                |       Assistant       |
                 +-----------------------+
                 | assistant_id (PK)     |
                 | employee_id (UNIQUE)  |
                 | assistant_name        |
                 | assistant_email       |
+                | email_app_password    |
                 +-----------------------+
                          | 0..1
                          |
@@ -314,22 +328,25 @@ this is a design document for the project including:
 + Request Body
 ```json
 {
-  "role": "ResearchAssistant",
+  "role": "Assistant",
   "employee_id": "123456",
-  "assistant_name": "Alice"
+  "assistant_name": "Alice",
+  "email_app_password": "app_password_123"
 }
 ```
 | 字段         | 类型     | 必填  | 描述              |
-| ---------- | ------ | --- | --------------- |
+| ---------- | ------ |-----| --------------- |
 | role       | string | Yes | 注册时为“游客”     |
 | employee_id | string | Yes | 员工编号            |
 | assistant_name | string | Yes | 科研秘书姓名         |
+| email_app_password | string | Yes | 用于发送邮件的应用专用密码 |
+
 + Response
 ```json
 {
   "success": true,
   "data": {
-    "role": "ResearchAssistant",
+    "role": "Assistant",
     "assistant_id": 5
   },
   "message": "Role verified successfully."
@@ -348,7 +365,7 @@ this is a design document for the project including:
       "user_id": 12,
       "username": "alice",
       "user_email": "alice@univ.edu",
-      "role": "ResearchAssistant",
+      "role": "Assistant",
       "assistant_id": 5
     }
   },
@@ -361,23 +378,32 @@ this is a design document for the project including:
 #### 2.2.1 Create Task
 
 + POST /tasks
-+ Request Body
++ Content-Type: multipart/form-data
++ Body
+  + metadata
+  + template_file
+
+| part 名称       | 类型               | 描述                                 |
+| ------------- | ---------------- | ---------------------------------- |
+| metadata      | application/json | 任务 JSON 信息（task_name、description…） |
+| template_file | file             | 模板文件（xlsx 等）                       |
+
 ```json
 {
-  "task_name": "2023年第一学期课程教学情况汇总表",
-  "description": "请填写本学期课程教学情况汇总表",
-  "template_path": "/path/to/template.xlsx",
-  "deadline": "2023-12-31T23:59:59",
-  "dept_id": 1
+    "task_name": "2023年第一学期课程教学情况汇总表",
+    "description": "请填写本学期课程教学情况汇总表",
+    "deadline": "2023-12-31T23:59:59Z",
+    "dept_id": 1
 }
 ```
 | 字段            | 类型       | 必填  | 描述            |
 | ------------- | -------- | --- | ------------- |
 | task_name     | string   | Yes | 任务名称          |
 | description   | string   | No  | 任务描述          |
-| template_path | string   | Yes | 模板文件存储路径      |
 | deadline      | datetime | Yes | 截止日期          |
 | dept_id      | long    | Yes | 任务所属的部门 ID |
+```template_file=@template.xlsx``` 
+
 + Response
 ```json
 {
@@ -388,17 +414,25 @@ this is a design document for the project including:
   "message": "Task created successfully."
 }
 
+
 ```
 #### 2.2.2 Update Task
 
 + PUT /tasks/{task_id}
-+ Request Body
++ Content-Type: multipart/form-data
++ Body
+  + metadata
+  + template_file (optional)
+
+| part 名称       | 类型               | 描述                                 |
+| ------------- | ---------------- | ---------- |
+| metadata      | application/json | 任务 JSON 信息（task_name、description…） |
+| template_file | file             | 模板文件（xlsx 等）                       |
 ```json
 {
   "task_name": "2023年第一学期课程教学情况汇总表",
   "description": "请填写本学期课程教学情况汇总表",
-  "template_path": "/path/to/template.xlsx",
-  "deadline": "2023-12-31T23:59:59",
+  "deadline": "2023-12-31T23:59:59Z",
   "dept_id": 1
 }
 ```
@@ -406,9 +440,10 @@ this is a design document for the project including:
 | ------------- | -------- | --- | ------------- |
 | task_name     | string   | Yes | 任务名称          |
 | description   | string   | No  | 任务描述          |
-| template_path | string   | Yes | 模板文件存储路径      |
 | deadline      | datetime | Yes | 截止日期          |
 | dept_id      | long    | Yes | 任务所属的部门 ID |
+```template_file=@template.xlsx```
+
 + Response
 ```json
 {
@@ -460,14 +495,14 @@ this is a design document for the project including:
         "task_id": 1,
         "task_name": "2023年第一学期课程教学情况汇总表",
         "description": "请填写本学期课程教学情况汇总表",
-        "template_path": "/path/to/template.xlsx",
-        "deadline": "2023-12-31T23:59:59",
+        "template_file_id": "1234567890",
+        "deadline": "2023-12-31T23:59:59Z",
         "department": {
           "dept_id": 1,
           "dept_name": "计算机科学与技术学院"
         },
         "status": "Ongoing",
-        "create_time": "2023-01-01T00:00:00"
+        "create_time": "2023-01-01T00:00:00Z"
       }
     ],
     "page": {
@@ -490,14 +525,14 @@ this is a design document for the project including:
     "task_id": 1,
     "task_name": "2023年第一学期课程教学情况汇总表",
     "description": "请填写本学期课程教学情况汇总表",
-    "template_path": "/path/to/template.xlsx",
-    "deadline": "2023-12-31T23:59:59",
+    "template_file_id": "1234567890",
+    "deadline": "2023-12-31T23:59:59Z",
     "department": {
       "dept_id": 1,
       "dept_name": "计算机科学与技术学院"
     },
     "status": "pending",
-    "create_time": "2023-01-01T00:00:00"
+    "create_time": "2023-01-01T00:00:00Z"
   }
 }
 ```
@@ -531,6 +566,7 @@ this is a design document for the project including:
       "submission": {
         "status": "Submitted",
         "submitted_at": "2024-12-30T12:00:00Z",
+        "attachment_file_id": "1234567890",
         "submission_id": 33
       }
     },
@@ -541,6 +577,7 @@ this is a design document for the project including:
       "submission": {
         "status": "Pending",
         "submitted_at": null,
+        "attachment_file_id": null,
         "submission_id": null
       }
     }
@@ -569,10 +606,8 @@ this is a design document for the project including:
 
 + POST /tasks/{task_id}/submissions/export
 + Response
-```
-Content-Type: application/xlsx
-Content-Disposition: attachment; filename="submissions.xlsx"
-```
+  + Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+  + Content-Disposition: attachment; filename="submissions.xlsx"
 
 
 ### 2.3 Submission
@@ -668,7 +703,7 @@ Content-Disposition: attachment; filename="submissions.xlsx"
       "teacher_id": 1,
       "attachment_path": "/path/to/attachment.xlsx",
       "attachment_description": "课程教学情况汇总表",
-      "submitted_at": "2023-01-01T00:00:00",
+      "submitted_at": "2023-01-01T00:00:00Z",
     }
   ],
   "total": 1,
@@ -690,7 +725,7 @@ Content-Disposition: attachment; filename="submissions.xlsx"
     "teacher_id": 1,
     "attachment_path": "/path/to/attachment.xlsx",
     "attachment_description": "课程教学情况汇总表",
-    "submitted_at": "2023-01-01T00:00:00",
+    "submitted_at": "2023-01-01T00:00:00Z",
   }
 }
 ``` -->
@@ -778,3 +813,7 @@ Content-Disposition: attachment; filename="submissions.xlsx"
 | ASSISTANT_NOT_FOUND        | 404 | Assistant not found. |
 | TASK_NOT_FOUND             | 404 | Task not found. |
 | PERMISSION_DENIED          | 403 | Permission denied. |
+| FILE_UPLOAD_ERROR          | 500 | File upload error. |
+| UPLOAD_DIR_ERROR           | 500 | Upload directory error. |
+| FILE_NOT_FOUND            | 404 | File not found. |
+| FILE_DELETE_ERROR          | 500 | File delete error. |

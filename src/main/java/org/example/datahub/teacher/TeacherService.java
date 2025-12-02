@@ -38,4 +38,8 @@ public class TeacherService {
     ) {
         return teacherRepository.findAllByDeptId(deptId);
     }
+
+    public void deleteTeacher(Long teacherId) {
+        teacherRepository.deleteById(teacherId);
+    }
 }

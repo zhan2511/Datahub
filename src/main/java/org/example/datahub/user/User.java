@@ -3,6 +3,7 @@ package org.example.datahub.user;
 
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
 
 //| 属性名 | 类型 | 约束 | 描述 |
 //| :--- | :---: | --- | --- |
@@ -10,10 +11,17 @@ import org.example.datahub.common.persistent.BaseEntity;
 //| username | 字符串 | 唯一 (UNIQUE) | 用于登录，不能重复 |
 //| password_hash | 字符串 | 必填 (NOT NULL) | 存储密码的加密值 |
 //| user_email | 字符串 | 唯一 (UNIQUE) | 用于找回密码或通知，不能重复 |
-//| role | 字符串 | 必填 (NOT NULL), CHECK IN（'管理员'（Administrator）, '科研秘书'（ResearchAssistant）, '游客'（Guest）） | 身份/角色 |
-//| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $ResearchAssistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
+//| role | 字符串 | 必填 (NOT NULL), CHECK IN（'管理员'（Administrator）, '科研秘书'（Assistant）, '游客'（Guest）） | 身份/角色 |
+//| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $Assistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users " +
+    "SET deleted_at = CURRENT_TIMESTAMP, " +
+    "username = CONCAT(username, '_deleted_', id), " +
+    "user_email = CONCAT(user_email, '_deleted_', id), " +
+    "role = 'Guest', " +
+    "assistant_id = NULL " +
+    "WHERE id = ?")
 public class User extends BaseEntity {
     @Column(name = "username", unique = true, nullable = false)
     String username;

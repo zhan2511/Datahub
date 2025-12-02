@@ -9,9 +9,11 @@ import org.example.datahub.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api")
 public class UserController implements UsersApi {
     private final UserService userService;
     private final AssistantService assistantService;
@@ -48,8 +50,8 @@ public class UserController implements UsersApi {
     public ResponseEntity<UserSignUpResponseDTO> userSignUp(UserSignUpRequestDTO userSignUpRequestDTO) {
         Long userId = userService.createUser(
             userSignUpRequestDTO.getUsername(),
-            userSignUpRequestDTO.getUserEmail(),
-            userSignUpRequestDTO.getPassword()
+            userSignUpRequestDTO.getPassword(),
+            userSignUpRequestDTO.getUserEmail()
         );
         return ResponseEntity.ok(new UserSignUpResponseDTO()
             .success(true)
@@ -66,7 +68,11 @@ public class UserController implements UsersApi {
         if (!"Administrator".equals(currentUserRole) && !currentUserId.equals(userId)) {
             throw new ServiceException("PERMISSION_DENIED", "You do not have permission to verify this user's role.", HttpStatus.FORBIDDEN);
         }
-        Long assistantId = assistantService.verifyRole(userVerifyRoleRequestDTO.getEmployeeId(), userVerifyRoleRequestDTO.getAssistantName());
+        Long assistantId = assistantService.getAssistantByEmployeeIdAndAssistantName(userVerifyRoleRequestDTO.getEmployeeId(), userVerifyRoleRequestDTO.getAssistantName());
+        if (assistantId == null) {
+            throw new ServiceException("ASSISTANT_NOT_FOUND", "Assistant not found", HttpStatus.NOT_FOUND);
+        }
+        userService.setUserRole(userId, "Assistant", assistantId);
         return ResponseEntity.ok(new UserVerifyRoleResponseDTO()
             .success(true)
             .data(new UserVerifyRoleResponseDataDTO()

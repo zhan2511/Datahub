@@ -4,6 +4,7 @@ package org.example.datahub.task;
 
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 //| task_id | 整数 | 主键 (PK) | 唯一标识一个汇总任务 |
 //| task_name | 字符串 | 必填 (NOT NULL) | 任务名称 |
 //| description | 字符串 | 可空 (NULLABLE) | 任务描述 |
-//| template_path | 字符串 | 必填 (NOT NULL) | Excel模板文件存储路径 |
+//| template_file_id | 整数 | 外键 (FK) | 指向 $File$ 表，存储模板文件信息 |
 //| dept_id | 整数 | 外键 (FK) | 指向 $Department$ 表 |
 //| creator_id | 整数 | 外键 (FK) | 指向 $ResearchAssistant$ 表 |
 //| create_time | 时间戳 | 必填 (NOT NULL) | 任务创建时间 |
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 //| status | 字符串 | 必填 (NOT NULL), CHECK IN（'已完成-Finished', '正在进行-Ongoing'） | 任务状态 |
 @Entity
 @Table(name = "tasks")
+@SQLDelete(sql = "UPDATE tasks SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class Task extends BaseEntity {
     @Column(name = "task_name", nullable = false)
     String taskName;
@@ -27,8 +29,8 @@ public class Task extends BaseEntity {
     @Column(name = "description", nullable = true)
     String description;
 
-    @Column(name = "template_path", nullable = false)
-    String templatePath;
+    @Column(name = "template_file_id", nullable = false)
+    Long templateFileId;
 
     @Column(name = "dept_id", nullable = false)
     Long deptId;
@@ -52,58 +54,30 @@ public class Task extends BaseEntity {
     public String getDescription() {
         return description;
     }
-    public String getTemplatePath() {
-        return templatePath;
-    }
-    public Long getDeptId() {
-        return deptId;
-    }
-    public Long getCreatorId() {
-        return creatorId;
-    }
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
-    public String getStatus() {
-        return status;
-    }
+    public Long getTemplateFileId() { return templateFileId; }
+    public Long getDeptId() { return deptId; }
+    public Long getCreatorId() { return creatorId; }
+    public LocalDateTime getCreateTime() { return createTime; }
+    public LocalDateTime getDeadline() { return deadline; }
+    public String getStatus() { return status; }
 
     // ================ Setters ================
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public void setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
-    }
-    public void setDeptId(Long deptId) {
-        this.deptId = deptId;
-    }
-    public void setCreatorId(Long creatorId) {
-        this.creatorId = creatorId;
-    }
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-    public void setDeadline(LocalDateTime deadline) {
-        this.deadline = deadline;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public void setTaskName(String taskName) { this.taskName = taskName; }
+    public void setDescription(String description) { this.description = description; }
+    public void setTemplateFileId(Long templateFileId) { this.templateFileId = templateFileId; }
+    public void setDeptId(Long deptId) { this.deptId = deptId; }
+    public void setCreatorId(Long creatorId) { this.creatorId = creatorId; }
+    public void setCreateTime(LocalDateTime createTime) { this.createTime = createTime; }
+    public void setDeadline(LocalDateTime deadline) { this.deadline = deadline; }
+    public void setStatus(String status) { this.status = status; }
 
     // ================ Constructors ================
     public Task() {
     }
-    public Task(String taskName, String description, String templatePath, Long deptId, Long creatorId, LocalDateTime deadline, String status) {
+    public Task(String taskName, String description, Long templateFileId, Long deptId, Long creatorId, LocalDateTime deadline, String status) {
         this.taskName = taskName;
         this.description = description;
-        this.templatePath = templatePath;
+        this.templateFileId = templateFileId;
         this.deptId = deptId;
         this.creatorId = creatorId;
         this.createTime = LocalDateTime.now();
@@ -111,9 +85,9 @@ public class Task extends BaseEntity {
         this.status = status;
     }
     // Note: Without description
-    public Task(String taskName, String templatePath, Long deptId, Long creatorId, LocalDateTime deadline, String status) {
+    public Task(String taskName, Long templateFileId, Long deptId, Long creatorId, LocalDateTime deadline, String status) {
         this.taskName = taskName;
-        this.templatePath = templatePath;
+        this.templateFileId = templateFileId;
         this.deptId = deptId;
         this.creatorId = creatorId;
         this.createTime = LocalDateTime.now();

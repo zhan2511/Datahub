@@ -23,7 +23,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("TaskItem")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
 public class TaskItemDTO {
 
   private Long taskId;
@@ -32,7 +32,7 @@ public class TaskItemDTO {
 
   private String description;
 
-  private String templatePath;
+  private Long templateFileId;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime deadline;
@@ -104,24 +104,24 @@ public class TaskItemDTO {
     this.description = description;
   }
 
-  public TaskItemDTO templatePath(String templatePath) {
-    this.templatePath = templatePath;
+  public TaskItemDTO templateFileId(Long templateFileId) {
+    this.templateFileId = templateFileId;
     return this;
   }
 
   /**
-   * Get templatePath
-   * @return templatePath
+   * Get templateFileId
+   * @return templateFileId
   */
   
-  @Schema(name = "template_path", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("template_path")
-  public String getTemplatePath() {
-    return templatePath;
+  @Schema(name = "template_file_id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("template_file_id")
+  public Long getTemplateFileId() {
+    return templateFileId;
   }
 
-  public void setTemplatePath(String templatePath) {
-    this.templatePath = templatePath;
+  public void setTemplateFileId(Long templateFileId) {
+    this.templateFileId = templateFileId;
   }
 
   public TaskItemDTO deadline(OffsetDateTime deadline) {
@@ -216,7 +216,7 @@ public class TaskItemDTO {
     return Objects.equals(this.taskId, taskItem.taskId) &&
         Objects.equals(this.taskName, taskItem.taskName) &&
         Objects.equals(this.description, taskItem.description) &&
-        Objects.equals(this.templatePath, taskItem.templatePath) &&
+        Objects.equals(this.templateFileId, taskItem.templateFileId) &&
         Objects.equals(this.deadline, taskItem.deadline) &&
         Objects.equals(this.status, taskItem.status) &&
         Objects.equals(this.createTime, taskItem.createTime) &&
@@ -225,7 +225,7 @@ public class TaskItemDTO {
 
   @Override
   public int hashCode() {
-    return Objects.hash(taskId, taskName, description, templatePath, deadline, status, createTime, department);
+    return Objects.hash(taskId, taskName, description, templateFileId, deadline, status, createTime, department);
   }
 
   @Override
@@ -235,7 +235,7 @@ public class TaskItemDTO {
     sb.append("    taskId: ").append(toIndentedString(taskId)).append("\n");
     sb.append("    taskName: ").append(toIndentedString(taskName)).append("\n");
     sb.append("    description: ").append(toIndentedString(description)).append("\n");
-    sb.append("    templatePath: ").append(toIndentedString(templatePath)).append("\n");
+    sb.append("    templateFileId: ").append(toIndentedString(templateFileId)).append("\n");
     sb.append("    deadline: ").append(toIndentedString(deadline)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    createTime: ").append(toIndentedString(createTime)).append("\n");

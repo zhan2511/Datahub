@@ -2,6 +2,7 @@ package org.example.datahub.task;
 
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.datahub.common.exception.ServiceException;
 import org.example.datahub.model.DepartmentItemDTO;
 import org.example.datahub.model.TaskItemDTO;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -21,6 +21,7 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
+
     @Autowired
     public TaskService(
             TaskRepository taskRepository,
@@ -33,7 +34,7 @@ public class TaskService {
     public Long createTask(
         String taskName,
         String description,
-        String templatePath,
+        Long templateFileId,
         Long deptId,
         Long creatorId,
         LocalDateTime deadline,
@@ -43,7 +44,7 @@ public class TaskService {
             new Task(
                 taskName,
                 description,
-                templatePath,
+                templateFileId,
                 deptId,
                 creatorId,
                 deadline,
@@ -57,15 +58,19 @@ public class TaskService {
         Long taskId,
         String taskName,
         String description,
-        String templatePath,
+        Long templateFileId,
         Long deptId,
         LocalDateTime deadline,
         String status
     ) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new IllegalArgumentException("Task not found"));
         task.setTaskName(taskName);
-        task.setDescription(description);
-        task.setTemplatePath(templatePath);
+        if (description != null) {
+            task.setDescription(description);
+        }
+        if (description != null) {
+            task.setTemplateFileId(templateFileId);
+        }
         task.setDeptId(deptId);
         task.setDeadline(deadline);
         task.setStatus(status);

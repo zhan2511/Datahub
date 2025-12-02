@@ -22,13 +22,15 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("SubmissionStatusItem")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-11-30T19:20:05.560758775+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
 public class SubmissionStatusItemDTO {
 
   private String status;
 
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime submittedAt;
+
+  private Long attachmentFileId;
 
   private Long submissionId;
 
@@ -72,6 +74,26 @@ public class SubmissionStatusItemDTO {
     this.submittedAt = submittedAt;
   }
 
+  public SubmissionStatusItemDTO attachmentFileId(Long attachmentFileId) {
+    this.attachmentFileId = attachmentFileId;
+    return this;
+  }
+
+  /**
+   * Get attachmentFileId
+   * @return attachmentFileId
+  */
+  
+  @Schema(name = "attachment_file_id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("attachment_file_id")
+  public Long getAttachmentFileId() {
+    return attachmentFileId;
+  }
+
+  public void setAttachmentFileId(Long attachmentFileId) {
+    this.attachmentFileId = attachmentFileId;
+  }
+
   public SubmissionStatusItemDTO submissionId(Long submissionId) {
     this.submissionId = submissionId;
     return this;
@@ -103,12 +125,13 @@ public class SubmissionStatusItemDTO {
     SubmissionStatusItemDTO submissionStatusItem = (SubmissionStatusItemDTO) o;
     return Objects.equals(this.status, submissionStatusItem.status) &&
         Objects.equals(this.submittedAt, submissionStatusItem.submittedAt) &&
+        Objects.equals(this.attachmentFileId, submissionStatusItem.attachmentFileId) &&
         Objects.equals(this.submissionId, submissionStatusItem.submissionId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(status, submittedAt, submissionId);
+    return Objects.hash(status, submittedAt, attachmentFileId, submissionId);
   }
 
   @Override
@@ -117,6 +140,7 @@ public class SubmissionStatusItemDTO {
     sb.append("class SubmissionStatusItemDTO {\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    submittedAt: ").append(toIndentedString(submittedAt)).append("\n");
+    sb.append("    attachmentFileId: ").append(toIndentedString(attachmentFileId)).append("\n");
     sb.append("    submissionId: ").append(toIndentedString(submissionId)).append("\n");
     sb.append("}");
     return sb.toString();
