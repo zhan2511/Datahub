@@ -312,6 +312,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
 
+##### 2.2.8 Collect Submissions
+#
+#  + POST /tasks/{task_id}/submissions/export
+#  + Response
+#  ```json
+#  {
+#    "success": true,
+#    "data": {
+#      "file_id": "1234567890"
+#    },
+#    "message": "Export submissions successfully."
+#  }
+#  ```
   /tasks/{task_id}/submissions/export:
     post:
       operationId: exportTaskSubmissions
@@ -324,12 +337,11 @@ paths:
           schema: { type: integer, format: int64 }
       responses:
         "200":
-          description: File response
+          description: Successful response
           content:
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            application/json:
               schema:
-                type: string
-                format: binary
+                $ref: "#/components/schemas/TaskSubmissionExportResponse"
 
   /departments:
     get:
@@ -343,6 +355,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/DepartmentListResponse"
+
+  /files/{file_id}:
+    get:
+      operationId: getFile
+      summary: Get file
+      description: Get file by file id.
+      parameters:
+        - in: path
+          name: file_id
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        "200":
+          description: File response
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
 
 components:
   schemas:
@@ -436,7 +467,7 @@ components:
                 user_email: { type: string }
                 role: { type: string }
                 assistant_id: { type: integer, format: int64 }
-
+        message: { type: string }
 
     UserVerifyRoleResponse:
       type: object
@@ -467,6 +498,7 @@ components:
           type: object
           properties:
             task_id: { type: integer, format: int64 }
+        message: { type: string }
 
     TaskListResponse:
       type: object
@@ -481,6 +513,7 @@ components:
                 $ref: "#/components/schemas/TaskItem"
             page:
               $ref: "#/components/schemas/PageInfo"
+        message: { type: string }
 
     TaskItem:
       type: object
@@ -501,6 +534,7 @@ components:
         success: { type: boolean }
         data:
           $ref: "#/components/schemas/TaskItem"
+        message: { type: string }
 
     TaskTeacherListResponse:
       type: object
@@ -516,6 +550,7 @@ components:
                 $ref: "#/components/schemas/TaskTeacherItem"
             page:
               $ref: "#/components/schemas/PageInfo"
+        message: { type: string }
 
     TaskTeacherItem:
       type: object
@@ -534,6 +569,16 @@ components:
         attachment_file_id: { type: integer, format: int64 }
         submission_id: { type: integer, format: int64 }
 
+    TaskSubmissionExportResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            file_id: { type: integer, format: int64 }
+        message: { type: string }
+
     # ==================== DEPARTMENT ====================
     DepartmentListResponse:
       type: object
@@ -546,6 +591,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/DepartmentItem"
+        message: { type: string }
 
     DepartmentItem:
       type: object

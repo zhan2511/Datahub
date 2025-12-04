@@ -10,6 +10,7 @@ import org.example.datahub.model.TaskCreateResponseDTO;
 import org.example.datahub.model.TaskDetailResponseDTO;
 import org.example.datahub.model.TaskListResponseDTO;
 import org.example.datahub.model.TaskMetadataDTO;
+import org.example.datahub.model.TaskSubmissionExportResponseDTO;
 import org.example.datahub.model.TaskTeacherListResponseDTO;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.annotation.Generated;
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
 @Validated
 @Tag(name = "tasks", description = "the tasks API")
 public interface TasksApi {
@@ -47,25 +48,25 @@ public interface TasksApi {
      * Export all task submissions as file.
      *
      * @param taskId  (required)
-     * @return File response (status code 200)
+     * @return Successful response (status code 200)
      */
     @Operation(
         operationId = "exportTaskSubmissions",
         summary = "Export submissions",
         description = "Export all task submissions as file.",
         responses = {
-            @ApiResponse(responseCode = "200", description = "File response", content = {
-                @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", schema = @Schema(implementation = org.springframework.core.io.Resource.class))
+            @ApiResponse(responseCode = "200", description = "Successful response", content = {
+                @Content(mediaType = "application/json", schema = @Schema(implementation = TaskSubmissionExportResponseDTO.class))
             })
         }
     )
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/tasks/{task_id}/submissions/export",
-        produces = { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }
+        produces = { "application/json" }
     )
     
-    ResponseEntity<org.springframework.core.io.Resource> exportTaskSubmissions(
+    ResponseEntity<TaskSubmissionExportResponseDTO> exportTaskSubmissions(
         @Parameter(name = "task_id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("task_id") Long taskId
     );
 

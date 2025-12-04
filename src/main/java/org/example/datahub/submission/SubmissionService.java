@@ -20,6 +20,7 @@ public class SubmissionService {
         Long taskId,
         Long teacherId,
         LocalDateTime submittedAt,
+        Long attachmentEmailUid,
         Long attachmentFileId,
         String attachmentDescription
     ) {
@@ -28,6 +29,7 @@ public class SubmissionService {
                 taskId,
                 teacherId,
                 submittedAt,
+                attachmentEmailUid,
                 attachmentFileId,
                 attachmentDescription
             )
@@ -38,5 +40,16 @@ public class SubmissionService {
         Long taskId
     ) {
         return submissionRepository.findAllByTaskId(taskId);
+    }
+
+    public Submission getSubmissionByTaskIdAndTeacherId(
+        Long taskId,
+        Long teacherId
+    ) {
+        return submissionRepository.findByTaskIdAndTeacherId(taskId, teacherId);
+    }
+
+    public void deleteSubmission(Long id) {
+        submissionRepository.deleteById(id);
     }
 }

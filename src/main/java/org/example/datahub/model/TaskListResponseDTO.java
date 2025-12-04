@@ -21,12 +21,14 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("TaskListResponse")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
 public class TaskListResponseDTO {
 
   private Boolean success;
 
   private TaskListResponseDataDTO data;
+
+  private String message;
 
   public TaskListResponseDTO success(Boolean success) {
     this.success = success;
@@ -68,6 +70,26 @@ public class TaskListResponseDTO {
     this.data = data;
   }
 
+  public TaskListResponseDTO message(String message) {
+    this.message = message;
+    return this;
+  }
+
+  /**
+   * Get message
+   * @return message
+  */
+  
+  @Schema(name = "message", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("message")
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -78,12 +100,13 @@ public class TaskListResponseDTO {
     }
     TaskListResponseDTO taskListResponse = (TaskListResponseDTO) o;
     return Objects.equals(this.success, taskListResponse.success) &&
-        Objects.equals(this.data, taskListResponse.data);
+        Objects.equals(this.data, taskListResponse.data) &&
+        Objects.equals(this.message, taskListResponse.message);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(success, data);
+    return Objects.hash(success, data, message);
   }
 
   @Override
@@ -92,6 +115,7 @@ public class TaskListResponseDTO {
     sb.append("class TaskListResponseDTO {\n");
     sb.append("    success: ").append(toIndentedString(success)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");
+    sb.append("    message: ").append(toIndentedString(message)).append("\n");
     sb.append("}");
     return sb.toString();
   }

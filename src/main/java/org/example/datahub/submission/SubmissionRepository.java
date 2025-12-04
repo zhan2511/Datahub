@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     List<Submission> findAllByTaskId(Long taskId);
+
+    Submission findByTaskIdAndTeacherId(Long taskId, Long teacherId);
 }

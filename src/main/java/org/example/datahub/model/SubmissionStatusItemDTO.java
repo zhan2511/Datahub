@@ -22,7 +22,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("SubmissionStatusItem")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-02T11:19:17.400856484+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
 public class SubmissionStatusItemDTO {
 
   private String status;

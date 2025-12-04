@@ -5,7 +5,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.DepartmentListResponseDataDTO;
+import org.example.datahub.model.TaskSubmissionExportResponseDataDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,20 +17,20 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * DepartmentListResponseDTO
+ * TaskSubmissionExportResponseDTO
  */
 
-@JsonTypeName("DepartmentListResponse")
+@JsonTypeName("TaskSubmissionExportResponse")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
-public class DepartmentListResponseDTO {
+public class TaskSubmissionExportResponseDTO {
 
   private Boolean success;
 
-  private DepartmentListResponseDataDTO data;
+  private TaskSubmissionExportResponseDataDTO data;
 
   private String message;
 
-  public DepartmentListResponseDTO success(Boolean success) {
+  public TaskSubmissionExportResponseDTO success(Boolean success) {
     this.success = success;
     return this;
   }
@@ -50,7 +50,7 @@ public class DepartmentListResponseDTO {
     this.success = success;
   }
 
-  public DepartmentListResponseDTO data(DepartmentListResponseDataDTO data) {
+  public TaskSubmissionExportResponseDTO data(TaskSubmissionExportResponseDataDTO data) {
     this.data = data;
     return this;
   }
@@ -62,15 +62,15 @@ public class DepartmentListResponseDTO {
   @Valid 
   @Schema(name = "data", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("data")
-  public DepartmentListResponseDataDTO getData() {
+  public TaskSubmissionExportResponseDataDTO getData() {
     return data;
   }
 
-  public void setData(DepartmentListResponseDataDTO data) {
+  public void setData(TaskSubmissionExportResponseDataDTO data) {
     this.data = data;
   }
 
-  public DepartmentListResponseDTO message(String message) {
+  public TaskSubmissionExportResponseDTO message(String message) {
     this.message = message;
     return this;
   }
@@ -98,10 +98,10 @@ public class DepartmentListResponseDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    DepartmentListResponseDTO departmentListResponse = (DepartmentListResponseDTO) o;
-    return Objects.equals(this.success, departmentListResponse.success) &&
-        Objects.equals(this.data, departmentListResponse.data) &&
-        Objects.equals(this.message, departmentListResponse.message);
+    TaskSubmissionExportResponseDTO taskSubmissionExportResponse = (TaskSubmissionExportResponseDTO) o;
+    return Objects.equals(this.success, taskSubmissionExportResponse.success) &&
+        Objects.equals(this.data, taskSubmissionExportResponse.data) &&
+        Objects.equals(this.message, taskSubmissionExportResponse.message);
   }
 
   @Override
@@ -112,7 +112,7 @@ public class DepartmentListResponseDTO {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class DepartmentListResponseDTO {\n");
+    sb.append("class TaskSubmissionExportResponseDTO {\n");
     sb.append("    success: ").append(toIndentedString(success)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");

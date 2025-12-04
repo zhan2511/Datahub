@@ -35,6 +35,7 @@ public class DepartmentController implements DepartmentsApi {
                     .toList()
                 )
             )
+            .message("Department list retrieved successfully")
         );
 
     }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -55,6 +56,37 @@ public class FileService {
         return fileRepository.save(file);
     }
 
+    public File saveFile(Long ownerId, InputStream inputStream, String originalFileName, Long fileSize, String contentType) {
+        String savedFileName = UUID.randomUUID() + "_" + originalFileName;
+
+        Path filePath = uploadDir.resolve(savedFileName);
+        try {
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new ServiceException("FILE_UPLOAD_ERROR", "Error while uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        File file = new File(ownerId, originalFileName, savedFileName, filePath.toString(), fileSize, contentType);
+
+        return fileRepository.save(file);
+    }
+
+    public File saveFile(Long ownerId, String filePath) {
+        String originalFileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        String savedFileName = UUID.randomUUID() + "_" + originalFileName;
+
+        Path sourceFilePath = Paths.get(filePath);
+        Path targetFilePath = uploadDir.resolve(savedFileName);
+        try {
+            Files.copy(sourceFilePath, targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+            File file = new File(ownerId, originalFileName, savedFileName, targetFilePath.toString(), Files.size(targetFilePath), Files.probeContentType(targetFilePath));
+            return fileRepository.save(file);
+        } catch (IOException e) {
+            throw new ServiceException("FILE_UPLOAD_ERROR", "Error while uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     public File getFileById(Long fileId) {
         return fileRepository.findById(fileId).orElseThrow(() ->
             new ServiceException("FILE_NOT_FOUND", "File not found", HttpStatus.NOT_FOUND)
@@ -72,5 +104,6 @@ public class FileService {
         }
         fileRepository.delete(file);
     }
+
 
 }

@@ -5,7 +5,6 @@
  */
 package org.example.datahub.api;
 
-import org.example.datahub.model.DepartmentListResponseDTO;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,33 +33,34 @@ import jakarta.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
 @Validated
-@Tag(name = "departments", description = "the departments API")
-public interface DepartmentsApi {
+@Tag(name = "files", description = "the files API")
+public interface FilesApi {
 
     /**
-     * GET /departments : Get department list
-     * Query all departments.
+     * GET /files/{file_id} : Get file
+     * Get file by file id.
      *
-     * @return Successful response (status code 200)
+     * @param fileId  (required)
+     * @return File response (status code 200)
      */
     @Operation(
-        operationId = "departmentList",
-        summary = "Get department list",
-        description = "Query all departments.",
+        operationId = "getFile",
+        summary = "Get file",
+        description = "Get file by file id.",
         responses = {
-            @ApiResponse(responseCode = "200", description = "Successful response", content = {
-                @Content(mediaType = "application/json", schema = @Schema(implementation = DepartmentListResponseDTO.class))
+            @ApiResponse(responseCode = "200", description = "File response", content = {
+                @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", schema = @Schema(implementation = org.springframework.core.io.Resource.class))
             })
         }
     )
     @RequestMapping(
         method = RequestMethod.GET,
-        value = "/departments",
-        produces = { "application/json" }
+        value = "/files/{file_id}",
+        produces = { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }
     )
     
-    ResponseEntity<DepartmentListResponseDTO> departmentList(
-        
+    ResponseEntity<org.springframework.core.io.Resource> getFile(
+        @Parameter(name = "file_id", description = "", required = true, in = ParameterIn.PATH) @PathVariable("file_id") Long fileId
     );
 
 }

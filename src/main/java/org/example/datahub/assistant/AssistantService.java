@@ -1,6 +1,7 @@
 package org.example.datahub.assistant;
 
 
+import jakarta.validation.constraints.NotNull;
 import org.example.datahub.common.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,10 +24,11 @@ public class AssistantService {
     public Long createAssistant(
         String employeeId,
         String assistantName,
-        String assistantEmail
+        String assistantEmail,
+        String emailAppPassword
     ) {
         return assistantRepository.save(
-            new Assistant(employeeId, assistantName, assistantEmail)
+            new Assistant(employeeId, assistantName, assistantEmail, emailAppPassword)
         ).getId();
     }
 
@@ -51,5 +53,21 @@ public class AssistantService {
             );
         }
         assistantRepository.deleteById(assistantId);
+    }
+
+    public Assistant getAssistantById(Long assistantId) {
+        return assistantRepository.findById(assistantId).orElseThrow(() ->
+            new ServiceException(
+                "ASSISTANT_NOT_FOUND",
+                "Assistant not found",
+                HttpStatus.NOT_FOUND
+            )
+        );
+    }
+
+    public void setEmailAppPassword(Long assistantId, String emailAppPassword) {
+        Assistant assistant = getAssistantById(assistantId);
+        assistant.setEmailAppPassword(emailAppPassword);
+        assistantRepository.save(assistant);
     }
 }

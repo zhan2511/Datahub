@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.example.datahub.model.UserDetailResponseDataUserDTO;
 import org.openapitools.jackson.nullable.JsonNullable;
 import java.time.OffsetDateTime;
 import jakarta.validation.Valid;
@@ -17,33 +16,33 @@ import java.util.*;
 import jakarta.annotation.Generated;
 
 /**
- * UserDetailResponseDataDTO
+ * TaskSubmissionExportResponseDataDTO
  */
 
-@JsonTypeName("UserDetailResponse_data")
+@JsonTypeName("TaskSubmissionExportResponse_data")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
-public class UserDetailResponseDataDTO {
+public class TaskSubmissionExportResponseDataDTO {
 
-  private UserDetailResponseDataUserDTO user;
+  private Long fileId;
 
-  public UserDetailResponseDataDTO user(UserDetailResponseDataUserDTO user) {
-    this.user = user;
+  public TaskSubmissionExportResponseDataDTO fileId(Long fileId) {
+    this.fileId = fileId;
     return this;
   }
 
   /**
-   * Get user
-   * @return user
+   * Get fileId
+   * @return fileId
   */
-  @Valid 
-  @Schema(name = "user", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("user")
-  public UserDetailResponseDataUserDTO getUser() {
-    return user;
+  
+  @Schema(name = "file_id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("file_id")
+  public Long getFileId() {
+    return fileId;
   }
 
-  public void setUser(UserDetailResponseDataUserDTO user) {
-    this.user = user;
+  public void setFileId(Long fileId) {
+    this.fileId = fileId;
   }
 
   @Override
@@ -54,20 +53,20 @@ public class UserDetailResponseDataDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    UserDetailResponseDataDTO userDetailResponseData = (UserDetailResponseDataDTO) o;
-    return Objects.equals(this.user, userDetailResponseData.user);
+    TaskSubmissionExportResponseDataDTO taskSubmissionExportResponseData = (TaskSubmissionExportResponseDataDTO) o;
+    return Objects.equals(this.fileId, taskSubmissionExportResponseData.fileId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user);
+    return Objects.hash(fileId);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class UserDetailResponseDataDTO {\n");
-    sb.append("    user: ").append(toIndentedString(user)).append("\n");
+    sb.append("class TaskSubmissionExportResponseDataDTO {\n");
+    sb.append("    fileId: ").append(toIndentedString(fileId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

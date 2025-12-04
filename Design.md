@@ -83,6 +83,7 @@ this is a design document for the project including:
 | task_id                | 整数 | 外键 (FK)      | 指向 $CollectionTask$ 表 |
 | teacher_id             | 整数 | 外键 (FK)      | 指向 $Teacher$ 表 |
 | submitted_at           | 时间戳 | 可空 (NULLABLE) | 提交时间 |
+| attachment_email_uid | 整数 | 可空 (NULLABLE) | 教师提交的附件在邮箱中的唯一标识 |
 | attachment_file_id     | 整数 | 外键 (FK), 可空 (NULLABLE) | 指向 $File$ 表，存储教师提交的附件信息 |
 | attachment_description | 字符串 | 可空 (NULLABLE) | 教师回复的附件描述 |
 
@@ -170,7 +171,8 @@ this is a design document for the project including:
                 | task_id (FK)              |
                 | teacher_id (FK)           |
                 | submitted_at              |
-                | attachment_path           |
+                | attachment_email_uid      |
+                | attachment_file_id        |
                 | attachment_description    |
                 +---------------------------+
 ```
@@ -510,7 +512,8 @@ this is a design document for the project including:
       "page_num": 1,
       "page_size": 10
     }
-  }
+  },
+  "message": "Task list retrieved successfully."
 }
 ```
 
@@ -533,7 +536,8 @@ this is a design document for the project including:
     },
     "status": "pending",
     "create_time": "2023-01-01T00:00:00Z"
-  }
+  },
+  "message": "Task detail retrieved successfully."
 }
 ```
 
@@ -586,8 +590,8 @@ this is a design document for the project including:
     "total_pages": 2,
     "page_num": 1,
     "page_size": 10
-  }
-
+  },
+  "message": "Teacher list retrieved successfully."
 }
 ```
 
@@ -606,9 +610,15 @@ this is a design document for the project including:
 
 + POST /tasks/{task_id}/submissions/export
 + Response
-  + Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-  + Content-Disposition: attachment; filename="submissions.xlsx"
-
+```json
+{
+  "success": true,
+  "data": {
+    "file_id": "1234567890"
+  },
+  "message": "Export submissions successfully."
+}
+```
 
 ### 2.3 Submission
 
@@ -751,7 +761,8 @@ this is a design document for the project including:
         "dept_name": "软件学院"
       }
     ]
-  }
+  },
+  "message": "Department list retrieved successfully."
 }
 
 ```
@@ -802,6 +813,15 @@ this is a design document for the project including:
 ```
 -->
 
+
+### 2.6 File
+
+#### 2.6.1 Get File
++ GET /files/{file_id}
++ Response
+  + Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+  + Content-Disposition: attachment; filename="file_name.xlsx"
+
 ## 3. Error Codes
 
 | ERROR_CODE                 | HTTP_STATUS_CODE | Description |
@@ -817,3 +837,9 @@ this is a design document for the project including:
 | UPLOAD_DIR_ERROR           | 500 | Upload directory error. |
 | FILE_NOT_FOUND            | 404 | File not found. |
 | FILE_DELETE_ERROR          | 500 | File delete error. |
+| INVALID_EMAIL_ADDRESS      | 400 | Invalid email address. |
+| MAIL_CONNECTION_ERROR | 500 | Mail server disconnection error. |
+| ASSISTANT_NOT_CONFIGURED   | 400 | Assistant not configured. |
+| MAILBOX_CHECK_FAILED      | 500 | Mailbox check failed. |
+| EMAIL_SEND_FAILED         | 500 | Email send failed. |
+| MAIL_SERVER_CONNECTION_ERROR | 500 | Mail server connection error. |
