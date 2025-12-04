@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("UserVerifyRoleRequest")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T12:21:25.408590772+08:00[Asia/Shanghai]")
 public class UserVerifyRoleRequestDTO {
 
   private String role;
@@ -28,6 +28,8 @@ public class UserVerifyRoleRequestDTO {
   private String employeeId;
 
   private String assistantName;
+
+  private String assistantEmail;
 
   private String emailAppPassword;
 
@@ -38,10 +40,11 @@ public class UserVerifyRoleRequestDTO {
   /**
    * Constructor with only required parameters
    */
-  public UserVerifyRoleRequestDTO(String role, String employeeId, String assistantName, String emailAppPassword) {
+  public UserVerifyRoleRequestDTO(String role, String employeeId, String assistantName, String assistantEmail, String emailAppPassword) {
     this.role = role;
     this.employeeId = employeeId;
     this.assistantName = assistantName;
+    this.assistantEmail = assistantEmail;
     this.emailAppPassword = emailAppPassword;
   }
 
@@ -105,6 +108,26 @@ public class UserVerifyRoleRequestDTO {
     this.assistantName = assistantName;
   }
 
+  public UserVerifyRoleRequestDTO assistantEmail(String assistantEmail) {
+    this.assistantEmail = assistantEmail;
+    return this;
+  }
+
+  /**
+   * Get assistantEmail
+   * @return assistantEmail
+  */
+  @NotNull 
+  @Schema(name = "assistant_email", requiredMode = Schema.RequiredMode.REQUIRED)
+  @JsonProperty("assistant_email")
+  public String getAssistantEmail() {
+    return assistantEmail;
+  }
+
+  public void setAssistantEmail(String assistantEmail) {
+    this.assistantEmail = assistantEmail;
+  }
+
   public UserVerifyRoleRequestDTO emailAppPassword(String emailAppPassword) {
     this.emailAppPassword = emailAppPassword;
     return this;
@@ -137,12 +160,13 @@ public class UserVerifyRoleRequestDTO {
     return Objects.equals(this.role, userVerifyRoleRequest.role) &&
         Objects.equals(this.employeeId, userVerifyRoleRequest.employeeId) &&
         Objects.equals(this.assistantName, userVerifyRoleRequest.assistantName) &&
+        Objects.equals(this.assistantEmail, userVerifyRoleRequest.assistantEmail) &&
         Objects.equals(this.emailAppPassword, userVerifyRoleRequest.emailAppPassword);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(role, employeeId, assistantName, emailAppPassword);
+    return Objects.hash(role, employeeId, assistantName, assistantEmail, emailAppPassword);
   }
 
   @Override
@@ -152,6 +176,7 @@ public class UserVerifyRoleRequestDTO {
     sb.append("    role: ").append(toIndentedString(role)).append("\n");
     sb.append("    employeeId: ").append(toIndentedString(employeeId)).append("\n");
     sb.append("    assistantName: ").append(toIndentedString(assistantName)).append("\n");
+    sb.append("    assistantEmail: ").append(toIndentedString(assistantEmail)).append("\n");
     sb.append("    emailAppPassword: ").append(toIndentedString(emailAppPassword)).append("\n");
     sb.append("}");
     return sb.toString();

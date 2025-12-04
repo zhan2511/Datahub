@@ -1,6 +1,7 @@
 package org.example.datahub.task;
 
 
+import jakarta.annotation.PostConstruct;
 import org.example.datahub.api.TasksApi;
 import org.example.datahub.assistant.Assistant;
 import org.example.datahub.assistant.AssistantService;
@@ -8,7 +9,7 @@ import org.example.datahub.auth.JwtFilter;
 import org.example.datahub.common.exception.ServiceException;
 import org.example.datahub.department.Department;
 import org.example.datahub.department.DepartmentService;
-import org.example.datahub.file.ExcelMergerService;
+import org.example.datahub.file.ExcelService;
 import org.example.datahub.file.File;
 import org.example.datahub.file.FileService;
 import org.example.datahub.mail.MailService;
@@ -21,15 +22,16 @@ import org.example.datahub.user.User;
 import org.example.datahub.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -48,9 +50,9 @@ public class TaskController implements TasksApi {
     private final UserService userService;
     private final FileService fileService;
     private final MailService mailService;
-    private final ExcelMergerService excelMergerService;
+    private final ExcelService excelService;
 
-    private String tempDir;
+    private final Path tempDir;
 
     @Autowired
     public TaskController(
@@ -62,8 +64,8 @@ public class TaskController implements TasksApi {
         UserService userService,
         FileService fileService,
         MailService mailService,
-        ExcelMergerService excelMergerService,
-        @Value("${app.temp.dir}") String tempDir
+        ExcelService excelService,
+        @Value("${app.temp.dir}") String tempDirConfig
     ) {
         this.taskService = taskService;
         this.teacherService = teacherService;
@@ -73,8 +75,19 @@ public class TaskController implements TasksApi {
         this.userService = userService;
         this.fileService = fileService;
         this.mailService = mailService;
-        this.excelMergerService = excelMergerService;
-        this.tempDir = tempDir;
+        this.excelService = excelService;
+        this.tempDir = Path.of(tempDirConfig);
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            if (!Files.exists(tempDir)) {
+                Files.createDirectories(tempDir);
+            }
+        } catch (IOException e) {
+            throw new ServiceException("TEMP_DIR_CREATE_FAILED", "Failed to create temp directory", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public void checkMailbox(Long assistantId, Long taskId) throws Exception {
@@ -89,7 +102,7 @@ public class TaskController implements TasksApi {
         List<Map<String, Object>> emails = mailService.listEmails()
             .stream()
             .filter(email ->
-                email.get("subject").equals(task.getTaskName()))
+                task.getTaskName().equals(email.get("subject")) )
             .toList();
         List<Submission> submissions = submissionService.listSubmissionsByTaskId(taskId);
         List<Teacher> teachers = teacherService.listTeachersByDeptId(task.getDeptId());
@@ -97,7 +110,7 @@ public class TaskController implements TasksApi {
         // process emails:  from in teachers, uid not in submissions, sentDate after submission's submittedAt
         for (Map<String, Object> email : emails) {
             String from = (String) email.get("from");
-            Long uid = (Long) email.get("uid");
+            Long uid = ((Number) email.get("uid")).longValue();
             LocalDateTime sentDate = (LocalDateTime) email.get("sentDate");
 
             // find teacher by email
@@ -131,9 +144,9 @@ public class TaskController implements TasksApi {
             Map<String, Object> attachment = attachmentList.getFirst();
             Long attachmentFileId = fileService.saveFile(
                 teacher.getId(),
-                (InputStream) attachment.get("inputStream"),
-                (String) attachment.get("filename"),
-                (Long) attachment.get("fileSize"),
+                (byte[]) attachment.get("bytes"),
+                (String) attachment.get("fileName"),
+                ((Number) attachment.get("fileSize")).longValue(),
                 (String) attachment.get("fileMineType")
             ).getId();
 
@@ -187,7 +200,7 @@ public class TaskController implements TasksApi {
         String templateFilePath = fileService.getFileById(task.getTemplateFileId()).getFilePath();
         String exportFilePath =  tempDir + "/" + task.getTaskName() + ".xlsx";
         try {
-            excelMergerService.mergeExcelFiles(
+            excelService.mergeExcelFiles(
                 templateFilePath,
                 submissionFilePaths,
                 exportFilePath
@@ -252,18 +265,27 @@ public class TaskController implements TasksApi {
             mailService.init(assistant.getAssistantEmail(), assistant.getEmailAppPassword());
 
             String subject = "Reminder: Please submit your assignment for task \"" + task.getTaskName() + "\"";
-            String content =
-                "Dear teachers, \n\n" +
-                "This is a friendly reminder to submit your assignment for the task \"" + task.getTaskName() + "\". " +
-                "The deadline for submission is " + task.getDeadline().atOffset(ZoneOffset.UTC) + ".\n\n" +
-                "Please make sure to submit your assignment before the deadline.\n\n" +
-                "Best regards,\n" +
-                "DataHub Team";
+//            String content =
+//                "Dear teachers, \n\n" +
+//                "This is a friendly reminder to submit your assignment for the task \"" + task.getTaskName() + "\". " +
+//                "The deadline for submission is " + task.getDeadline().atOffset(ZoneOffset.UTC) + ".\n\n" +
+//                "Please make sure to submit your assignment before the deadline.\n\n" +
+//                "Best regards,\n" +
+//                "DataHub Team";
+            String htmlContent =
+                "<html><body>" +
+                "<p>Dear teachers,</p>" +
+                "<p>This is a friendly reminder to submit your assignment for the task \"" + task.getTaskName() + "\". " +
+                "The deadline for submission is " + task.getDeadline().atOffset(ZoneOffset.UTC) + ".</p>" +
+                "<p>Please make sure to submit your assignment before the deadline.</p>" +
+                "<p>Best regards,</p>" +
+                "<p>DataHub Team</p>" +
+                "</body></html>";
             String templateFilePath = fileService.getFileById(task.getTemplateFileId()).getFilePath();
 
             for (String tos : unsubmittedTeacherEmails) {
                 try {
-                    mailService.sendEmail(tos, subject, content, templateFilePath);
+                    mailService.sendEmail(tos, subject, htmlContent, templateFilePath);
                 } catch (Exception e) {
                     throw new ServiceException(
                         "EMAIL_SEND_FAILED",
@@ -311,29 +333,49 @@ public class TaskController implements TasksApi {
             Assistant assistant = assistantService.getAssistantById(assistantId);
             mailService.init(assistant.getAssistantEmail(), assistant.getEmailAppPassword());
             String subject = "New task created: \"" + metadata.getTaskName() + "\"";
-            String content =
-                "Dear Teachers,\n\n" +
-                "A new task \"" + metadata.getTaskName() + "\" has been created. "+
-                "Please find the details below:\n\n" +
-                "Task Name: " + metadata.getTaskName() + "\n" +
-                "Description: " + metadata.getDescription() + "\n" +
-                "Deadline: " + metadata.getDeadline() + "\n\n" +
-                "Please make sure to submit your assignments before the deadline.\n\n" +
-                "Attention:\n" +
-                "\t1. Please make sure your submission follows the template provided.\n" +
-                "\t2. Please send your submission to this email with the subject as the task name.\n\n" +
-                "Best regards,\n" +
-                "DataHub Team";
+//            String content =
+//                "Dear Teachers,\n\n" +
+//                "A new task \"" + metadata.getTaskName() + "\" has been created. "+
+//                "Please find the details below:\n\n" +
+//                "Task Name: " + metadata.getTaskName() + "\n" +
+//                "Description: " + metadata.getDescription() + "\n" +
+//                "Deadline: " + metadata.getDeadline() + "\n\n" +
+//                "Please make sure to submit your assignments before the deadline.\n\n" +
+//                "Attention:\n" +
+//                "\t1. Please make sure your submission follows the template provided.\n" +
+//                "\t2. Please send your submission to this email with the subject as the task name.\n\n" +
+//                "Best regards,\n" +
+//                "DataHub Team";
+            String htmlContent =
+                "<html><body>" +
+                "<p>Dear Teachers,</p>" +
+                "<p>A new task \"" + metadata.getTaskName() + "\" has been created. "+
+                "Please find the details below:</p>" +
+                "<ul>" +
+                "<li>Task Name: " + metadata.getTaskName() + "</li>" +
+                "<li>Description: " + metadata.getDescription() + "</li>" +
+                "<li>Deadline: " + metadata.getDeadline() + "</li>" +
+                "</ul>" +
+                "<p>Please make sure to submit your assignments before the deadline.</p>" +
+                "<p>Attention:</p>" +
+                "<ul>" +
+                "<li>Please make sure your submission follows the template provided.</li>" +
+                "<li>Please send your submission to this email with the subject as the task name.</li>" +
+                "</ul>" +
+                "<p>Best regards,</p>" +
+                "<p>DataHub Team</p>" +
+                "</body></html>";
             List<Teacher> teachers = teacherService.listTeachersByDeptId(metadata.getDeptId());
             for (Teacher teacher : teachers) {
                 try {
-                    mailService.sendEmail(teacher.getTeacherEmail(), subject, content, uploadedFile.getFilePath());
+                    mailService.sendEmail(teacher.getTeacherEmail(), subject, htmlContent, uploadedFile.getFilePath());
                 } catch (Exception e) {
-                    throw new ServiceException(
-                        "EMAIL_SEND_FAILED",
-                        "Failed to send task creation email to " + teacher.getTeacherEmail() + ": " + e.getMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                    );
+                    message += "Failed to send task creation email to " + teacher.getTeacherEmail() + "\n";
+//                    throw new ServiceException(
+//                        "EMAIL_SEND_FAILED",
+//                        "Failed to send task creation email to " + teacher.getTeacherEmail() + ": " + e.getMessage(),
+//                        HttpStatus.INTERNAL_SERVER_ERROR
+//                    );
                 }
             }
         }else {
@@ -366,9 +408,44 @@ public class TaskController implements TasksApi {
         fileService.deleteFile(taskService.getTask(taskId).getTemplateFileId());
         taskService.deleteTask(taskId);
         // TODO: delete submissions related
+
+        String message = "Task deleted successfully.\n";
+        User user = userService.getUserById(currentUserId);
+        Long assistantId = user.getAssistantId();
+        if (assistantId != null && assistantService.getAssistantById(assistantId).getAssistantEmail() != null) {
+            Assistant assistant = assistantService.getAssistantById(assistantId);
+            mailService.init(assistant.getAssistantEmail(), assistant.getEmailAppPassword());
+            String subject = "Task deleted: \"" + taskService.getTask(taskId).getTaskName() + "\"";
+//            String content =
+//                "Dear Teachers,\n\n" +
+//                "The task \"" + taskService.getTask(taskId).getTaskName() + "\" has been deleted.\n\n" +
+//                "Best regards,\n" +
+//                "DataHub Team";
+            String htmlContent =
+                "<html><body>" +
+                "<p>Dear Teachers,</p>" +
+                "<p>The task \"" + taskService.getTask(taskId).getTaskName() + "\" has been deleted.</p>" +
+                "<p>Best regards,</p>" +
+                "<p>DataHub Team</p>" +
+                "</body></html>";
+            List<Teacher> teachers = teacherService.listTeachersByDeptId(taskService.getTask(taskId).getDeptId());
+            for (Teacher teacher : teachers) {
+                try {
+                    mailService.sendEmail(teacher.getTeacherEmail(), subject, htmlContent, null);
+                } catch (Exception e) {
+                    message += "Failed to send task deletion email to " + teacher.getTeacherEmail() + "\n";
+//                    throw new ServiceException(
+//                        "EMAIL_SEND_FAILED",
+//                        "Failed to send task deletion email to " + teacher.getTeacherEmail() + ": " + e.getMessage(),
+//                        HttpStatus.INTERNAL_SERVER_ERROR
+//                    );
+                }
+            }
+        }
+
         return ResponseEntity.ok(new SuccessResponseDTO()
             .success(true)
-            .message("Task deleted successfully")
+            .message(message)
         );
     }
 
@@ -513,6 +590,7 @@ public class TaskController implements TasksApi {
                     .submission(new SubmissionStatusItemDTO()
                         .status(status)
                         .submittedAt(submission == null ? null : submission.getSubmittedAt().atOffset(ZoneOffset.UTC))
+                        .attachmentFileId(submission == null ? null : submission.getAttachmentFileId())
                         .submissionId(submission == null ? null : submission.getId())
                     );
             })
@@ -571,41 +649,62 @@ public class TaskController implements TasksApi {
             "Ongoing"
         );
 
+        String message = "Task updated successfully.\n";
         Long assistantId = userService.getUserById(currentUserId).getAssistantId();
         if (assistantId != null && assistantService.getAssistantById(assistantId).getAssistantEmail() != null) {
             Assistant assistant = assistantService.getAssistantById(assistantId);
             mailService.init(assistant.getAssistantEmail(), assistant.getEmailAppPassword());
             String subject = "Task updated: \"" + metadata.getTaskName() + "\"";
-            String content =
-                "Dear Teachers,\n\n" +
-                "The task \"" + metadata.getTaskName() + "\" has been updated. "+
-                "Please find the updated details below:\n\n" +
-                "Task Name: " + metadata.getTaskName() + "\n" +
-                "Description: " + metadata.getDescription() + "\n" +
-                "Deadline: " + metadata.getDeadline() + "\n\n" +
-                "Please make sure to submit your assignments before the deadline.\n\n" +
-                "Attention:\n" +
-                "\t1. Please make sure your submission follows the updated template provided.\n" +
-                "\t2. Please send your submission to this email with the subject as the task name.\n\n" +
-                "Best regards,\n" +
-                "DataHub Team";
+//            String content =
+//                "Dear Teachers,\n\n" +
+//                "The task \"" + metadata.getTaskName() + "\" has been updated. "+
+//                "Please find the updated details below:\n\n" +
+//                "Task Name: " + metadata.getTaskName() + "\n" +
+//                "Description: " + metadata.getDescription() + "\n" +
+//                "Deadline: " + metadata.getDeadline() + "\n\n" +
+//                "Please make sure to submit your assignments before the deadline.\n\n" +
+//                "Attention:\n" +
+//                "\t1. Please make sure your submission follows the updated template provided.\n" +
+//                "\t2. Please send your submission to this email with the subject as the task name.\n\n" +
+//                "Best regards,\n" +
+//                "DataHub Team";
+            String htmlContent =
+                "<html><body>" +
+                "<p>Dear Teachers,</p>" +
+                "<p>The task \"" + metadata.getTaskName() + "\" has been updated. " +
+                "Please find the updated details below:</p>" +
+                "<ul>" +
+                "<li>Task Name: " + metadata.getTaskName() + "</li>" +
+                "<li>Description: " + metadata.getDescription() + "</li>" +
+                "<li>Deadline: " + metadata.getDeadline() + "</li>" +
+                "</ul>" +
+                "<p>Please make sure to submit your assignments before the deadline.</p>" +
+                "<p>Attention:</p>" +
+                "<ul>" +
+                "<li>Please make sure your submission follows the updated template provided.</li>" +
+                "<li>Please send your submission to this email with the subject as the task name.</li>" +
+                "</ul>" +
+                "<p>Best regards,</p>" +
+                "<p>DataHub Team</p>" +
+                "</body></html>";
             List<Teacher> teachers = teacherService.listTeachersByDeptId(metadata.getDeptId());
             for (Teacher teacher : teachers) {
                 try {
-                    mailService.sendEmail(teacher.getTeacherEmail(), subject, content, fileService.getFileById(uploadedFileId).getFilePath());
+                    mailService.sendEmail(teacher.getTeacherEmail(), subject, htmlContent, fileService.getFileById(uploadedFileId).getFilePath());
                 } catch (Exception e) {
-                    throw new ServiceException(
-                        "EMAIL_SEND_FAILED",
-                        "Failed to send task update email to " + teacher.getTeacherEmail() + ": " + e.getMessage(),
-                        HttpStatus.INTERNAL_SERVER_ERROR
-                    );
+                    message += "Failed to send task update email to " + teacher.getTeacherEmail() + "\n";
+//                    throw new ServiceException(
+//                        "EMAIL_SEND_FAILED",
+//                        "Failed to send task update email to " + teacher.getTeacherEmail() + ": " + e.getMessage(),
+//                        HttpStatus.INTERNAL_SERVER_ERROR
+//                    );
                 }
             }
         }
 
         return ResponseEntity.ok(new SuccessResponseDTO()
             .success(true)
-            .message("Task updated successfully")
+            .message(message)
         );
     }
 

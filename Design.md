@@ -333,6 +333,7 @@ this is a design document for the project including:
   "role": "Assistant",
   "employee_id": "123456",
   "assistant_name": "Alice",
+  "assistant_email": "alice@univ.edu",
   "email_app_password": "app_password_123"
 }
 ```
@@ -341,6 +342,7 @@ this is a design document for the project including:
 | role       | string | Yes | 注册时为“游客”     |
 | employee_id | string | Yes | 员工编号            |
 | assistant_name | string | Yes | 科研秘书姓名         |
+| assistant_email | string | Yes | 科研秘书邮箱地址     |
 | email_app_password | string | Yes | 用于发送邮件的应用专用密码 |
 
 + Response

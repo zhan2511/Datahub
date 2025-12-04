@@ -13,7 +13,7 @@ import java.util.Date;
 public class JwtUtil {
     private static final String JWT_SECRET = "DataHubSecretKeyAttendToBeAtLeast32CharactersLong";
     private static final SecretKey JWT_SECRET_KEY = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
-    private static final Long JWT_EXPIRATION_MS = 3600000L; // 1 hour
+    private static final Long JWT_EXPIRATION_MS = 7 * 24 * 60 * 60 * 1000L; // 7 days in milliseconds
 
     public String generateToken(Long userId) {
         return Jwts.builder()

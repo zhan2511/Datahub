@@ -33,7 +33,7 @@ public class AssistantService {
     }
 
     public Long getAssistantByEmployeeIdAndAssistantName(String employeeId, String assistantName) {
-        Long assistantId = assistantRepository.findByEmployeeIdAndAssistantName(employeeId, assistantName);
+        Long assistantId = assistantRepository.findByEmployeeIdAndAssistantName(employeeId, assistantName).getId();
         if (assistantId == null) {
             throw new ServiceException(
                 "ASSISTANT_NOT_FOUND",
@@ -65,8 +65,15 @@ public class AssistantService {
         );
     }
 
-    public void setEmailAppPassword(Long assistantId, String emailAppPassword) {
-        Assistant assistant = getAssistantById(assistantId);
+    public void setEmail(Long assistantId, String assistantEmail, String emailAppPassword) {
+        Assistant assistant = assistantRepository.findById(assistantId).orElseThrow(() ->
+            new ServiceException(
+                "ASSISTANT_NOT_FOUND",
+                "Assistant not found",
+                HttpStatus.NOT_FOUND
+            )
+        );
+        assistant.setAssistantEmail(assistantEmail);
         assistant.setEmailAppPassword(emailAppPassword);
         assistantRepository.save(assistant);
     }

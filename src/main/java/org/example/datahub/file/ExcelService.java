@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.List;
 
 @Service
-public class ExcelMergerService {
+public class ExcelService {
 
     /**
      * Merges multiple Excel files into a single Excel file.
@@ -64,6 +64,36 @@ public class ExcelMergerService {
 
         templateWb.close();
         templateFis.close();
+    }
+
+    /**
+     *
+     * @param filePath The path of the Excel file to be created.
+     * @param data List of String arrays, each array representing a row of data.
+     *          e.g. data = [["Name", "Age"], ["John", "25"], ["Mary", "30"]]
+     * @throws IOException Thrown if any error occurs during the creation process.
+     */
+    public void createExcelFile(String filePath, List<String[]> data) throws IOException {
+        try (Workbook workbook = new XSSFWorkbook();
+             FileOutputStream fileOut = new FileOutputStream(filePath)) {
+
+            Sheet sheet = workbook.createSheet("Sheet1");
+            int rowNum = 0;
+            for (String[] rowData : data) {
+                Row row = sheet.createRow(rowNum++);
+                int colNum = 0;
+                for (String cellData : rowData) {
+                    Cell cell = row.createCell(colNum++);
+                    try {
+                        cell.setCellValue(Double.parseDouble(cellData));
+                    } catch (NumberFormatException e) {
+                        cell.setCellValue(cellData);
+                    }
+                }
+            }
+
+            workbook.write(fileOut);
+        }
     }
 
     private static void copyRow(XSSFSheet templateSheet, XSSFSheet outputSheet,

@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("SuccessResponse")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T09:26:02.924376840+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T12:21:25.408590772+08:00[Asia/Shanghai]")
 public class SuccessResponseDTO {
 
   private Boolean success;

@@ -82,7 +82,7 @@ public class UserController implements UsersApi {
         if (assistantId == null) {
             throw new ServiceException("ASSISTANT_NOT_FOUND", "Assistant not found", HttpStatus.NOT_FOUND);
         }
-        assistantService.setEmailAppPassword(assistantId, userVerifyRoleRequestDTO.getEmailAppPassword());
+        assistantService.setEmail(assistantId, userVerifyRoleRequestDTO.getAssistantEmail(), userVerifyRoleRequestDTO.getEmailAppPassword());
 
         // check mail server connection
         String message = "User verify role successfully.";
@@ -99,6 +99,7 @@ public class UserController implements UsersApi {
         return ResponseEntity.ok(new UserVerifyRoleResponseDTO()
             .success(true)
             .data(new UserVerifyRoleResponseDataDTO()
+                .role("Assistant")
                 .assistantId(assistantId)
             )
             .message(message)

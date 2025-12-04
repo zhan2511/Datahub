@@ -424,8 +424,9 @@ components:
         role: { type: string }
         employee_id: { type: string }
         assistant_name: { type: string }
+        assistant_email: { type: string }
         email_app_password: { type: string }
-      required: [role, employee_id, assistant_name, email_app_password]
+      required: [role, employee_id, assistant_name, assistant_email, email_app_password]
 
     UserSignUpResponse:
       type: object

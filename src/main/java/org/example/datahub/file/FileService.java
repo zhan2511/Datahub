@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -48,7 +49,7 @@ public class FileService {
         try {
             Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new ServiceException("FILE_UPLOAD_ERROR", "Error while uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException("FILE_SAVE_ERROR", "Error while saving file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         File file = new File(ownerId, originalFileName, savedFileName, filePath.toString(), multipartFile.getSize(), multipartFile.getContentType());
@@ -56,14 +57,15 @@ public class FileService {
         return fileRepository.save(file);
     }
 
-    public File saveFile(Long ownerId, InputStream inputStream, String originalFileName, Long fileSize, String contentType) {
+    public File saveFile(Long ownerId, byte[] bytes, String originalFileName, Long fileSize, String contentType) {
         String savedFileName = UUID.randomUUID() + "_" + originalFileName;
 
         Path filePath = uploadDir.resolve(savedFileName);
+        InputStream inputStream = new ByteArrayInputStream(bytes);
         try {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new ServiceException("FILE_UPLOAD_ERROR", "Error while uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException("FILE_SAVE_ERROR", "Error while saving file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         File file = new File(ownerId, originalFileName, savedFileName, filePath.toString(), fileSize, contentType);
@@ -82,7 +84,7 @@ public class FileService {
             File file = new File(ownerId, originalFileName, savedFileName, targetFilePath.toString(), Files.size(targetFilePath), Files.probeContentType(targetFilePath));
             return fileRepository.save(file);
         } catch (IOException e) {
-            throw new ServiceException("FILE_UPLOAD_ERROR", "Error while uploading file", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ServiceException("FILE_SAVE_ERROR", "Error while saving file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

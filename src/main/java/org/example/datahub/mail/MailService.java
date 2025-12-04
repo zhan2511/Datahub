@@ -95,14 +95,22 @@ public class MailService {
         msg.setSubject(subject, "UTF-8");
 
         if (attachmentPath == null || attachmentPath.isEmpty()) {
-            msg.setText(content, "UTF-8");
+            if (content.startsWith("<html>")){
+                msg.setContent(content, "text/html; charset=UTF-8");
+            }else {
+                msg.setText(content, "UTF-8");
+            }
             Transport.send(msg);
             return;
         }
 
         Multipart multipart = new MimeMultipart();
         MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setText(content, "UTF-8");
+        if (content.startsWith("<html>")){
+            textPart.setContent(content, "text/html; charset=UTF-8");
+        }else {
+            textPart.setText(content, "UTF-8");
+        }
         multipart.addBodyPart(textPart);
 
         MimeBodyPart attachmentPart = new MimeBodyPart();
@@ -121,23 +129,46 @@ public class MailService {
      */
     public List<Map<String, Object>> listEmails() throws Exception {
         List<Map<String, Object>> result = new ArrayList<>();
+        Store store = null;
+        Folder inbox = null;
+        try {
+            store = getImapStore();
+            inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+            UIDFolder uidFolder = (UIDFolder) inbox;
 
-        Store store = getImapStore();
-        Folder inbox = store.getFolder("INBOX");
-        inbox.open(Folder.READ_ONLY);
-        UIDFolder uidFolder = (UIDFolder) inbox;
+            Message[] messages = inbox.getMessages();
+            if (messages.length == 0) {
+                return result;
+            }
+            FetchProfile fp = new FetchProfile();
+            fp.add(FetchProfile.Item.ENVELOPE);
+            fp.add(FetchProfile.Item.FLAGS);
+            fp.add(FetchProfile.Item.CONTENT_INFO);
+            inbox.fetch(messages, fp);
+//            inbox.fetch(messages, new FetchProfile());
 
-        for (Message msg : inbox.getMessages()) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("uid", uidFolder.getUID(msg));
-            item.put("subject", msg.getSubject());
-            item.put("from", Arrays.toString(msg.getFrom()));
-            item.put("sentDate", msg.getSentDate().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime());
-            result.add(item);
+            for (Message msg : messages) {
+                try {
+                    Map<String, Object> item = new HashMap<>();
+                    item.put("uid", uidFolder.getUID(msg));
+                    item.put("subject", msg.getSubject() == null ? "" : msg.getSubject());
+//                    item.put("from", Arrays.toString(msg.getFrom()));
+                    Address[] fromAddresses = msg.getFrom();
+                    if (fromAddresses != null && fromAddresses.length > 0) {
+                        String fromEmail = ((InternetAddress)fromAddresses[0]).getAddress();
+                        item.put("from", fromEmail);
+                    }
+                    item.put("sentDate", msg.getSentDate().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime());
+                    result.add(item);
+                } catch (Exception e) {
+                    System.err.println("Error processing message: " + e.getMessage());
+                }
+            }
+        } finally {
+            if (inbox != null && inbox.isOpen()) inbox.close(false);
+            if (store != null && store.isConnected()) store.close();
         }
-
-        inbox.close(false);
-        store.close();
 
         return result;
     }
@@ -177,11 +208,11 @@ public class MailService {
                     Map<String, Object> att = new HashMap<>();
                     att.put("fileName", part.getFileName());
                     att.put("fileSize", part.getSize());
-                    att.put("fileMineType", part.getContentType());
+                    att.put("fileMineType", new ContentType(part.getContentType()).getBaseType());
 
                     DataHandler handler = part.getDataHandler();
-                    InputStream is = handler.getInputStream();
-                    att.put("inputStream", is);
+                    byte[] bytes = handler.getInputStream().readAllBytes();
+                    att.put("bytes", bytes);
 
                     attachments.add(att);
                 }else if (part.isMimeType("text/plain")) {
