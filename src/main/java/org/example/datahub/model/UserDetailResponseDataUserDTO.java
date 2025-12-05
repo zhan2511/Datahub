@@ -20,7 +20,7 @@ import jakarta.annotation.Generated;
  */
 
 @JsonTypeName("UserDetailResponse_data_user")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-04T12:21:25.408590772+08:00[Asia/Shanghai]")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-12-05T18:33:26.059321132+08:00[Asia/Shanghai]")
 public class UserDetailResponseDataUserDTO {
 
   private Long userId;
