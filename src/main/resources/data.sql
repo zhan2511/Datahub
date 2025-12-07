@@ -55,11 +55,11 @@ INSERT INTO teachers (id, employee_id, teacher_name, teacher_email, dept_id) VAL
 
 -- 信息管理系 (dept_id = 3) 的 20 名教师
 INSERT INTO teachers (id, employee_id, teacher_name, teacher_email, dept_id) VALUES
---     (41, 'T3001', '曹教授', 'cao.prof@im.edu', 3),
---     (42, 'T3002', '薛副教授', 'xue.assocprof@im.edu', 3),
---     (43, 'T3003', '黎讲师', 'li.lecturer@im.edu', 3),
---     (44, 'T3004', '段高级讲师', 'duan.seniorlect@im.edu', 3),
---     (45, 'T3005', '雷博士', 'lei.dr@im.edu', 3),
+    (41, 'T3001', '曹教授', 'cao.prof@im.edu', 3),
+    (42, 'T3002', '薛副教授', 'xue.assocprof@im.edu', 3),
+    (43, 'T3003', '黎讲师', 'li.lecturer@im.edu', 3),
+    (44, 'T3004', '段高级讲师', 'duan.seniorlect@im.edu', 3),
+    (45, 'T3005', '雷博士', 'lei.dr@im.edu', 3),
 --     (46, 'T3006', '杨教授', 'yang.prof@im.edu', 3),
 --     (47, 'T3007', '俞副教授', 'yu.assocprof@im.edu', 3),
 --     (48, 'T3008', '钟讲师', 'zhong.lecturer@im.edu', 3),
@@ -79,5 +79,5 @@ INSERT INTO teachers (id, employee_id, teacher_name, teacher_email, dept_id) VAL
 -- ================== assistants table ==================
 INSERT INTO assistants (id, employee_id, assistant_name, assistant_email, email_app_password) VALUES
     (1, 'A001', '科研秘书-小李', null, null),
-    (2, 'A002', '科研秘书-小王', 'wang.assistant@example.com', 'app_pwd_wang'),
-    (3, 'A003', '科研秘书-小张', 'zhang.assistant@example.com', 'app_pwd_zhang');
+    (2, 'A002', '科研秘书-小王', null, null),
+    (3, 'A003', '科研秘书-小张', null, null);

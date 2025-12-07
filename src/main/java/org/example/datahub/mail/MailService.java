@@ -4,11 +4,14 @@ import jakarta.activation.DataHandler;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 import jakarta.mail.UIDFolder;
+import jakarta.mail.search.*;
 import org.example.datahub.common.exception.ServiceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -124,10 +127,15 @@ public class MailService {
     /**
      * List all emails in the INBOX.
      *
+//     * @param startTime Optional start time for filtering emails.
+//     * @param endTime Optional end time for filtering emails.
      * @return List of maps: {uid, subject, from, sentDate}
      * @throws Exception If an error occurs during retrieval.
      */
-    public List<Map<String, Object>> listEmails() throws Exception {
+    public List<Map<String, Object>> listEmails(
+        LocalDateTime startTime,
+        LocalDateTime endTime
+    ) throws Exception {
         List<Map<String, Object>> result = new ArrayList<>();
         Store store = null;
         Folder inbox = null;
@@ -137,7 +145,33 @@ public class MailService {
             inbox.open(Folder.READ_ONLY);
             UIDFolder uidFolder = (UIDFolder) inbox;
 
-            Message[] messages = inbox.getMessages();
+            Message[] messages;
+            SearchTerm searchTerm;
+            ZoneId zone = ZoneId.systemDefault();
+
+            if (startTime != null && endTime != null) {
+                Date startDay = Date.from(startTime.toLocalDate().atStartOfDay(zone).toInstant());
+                Date endDay = Date.from(endTime.toLocalDate().plusDays(1).atStartOfDay(zone).toInstant());
+                searchTerm = new AndTerm(
+                    new ReceivedDateTerm(ComparisonTerm.GE, startDay),
+                    new ReceivedDateTerm(ComparisonTerm.LT, endDay)
+                );
+            } else if (startTime != null) {
+                Date startDay = Date.from(startTime.toLocalDate().atStartOfDay(zone).toInstant());
+                searchTerm = new ReceivedDateTerm(ComparisonTerm.GE, startDay);
+            } else if (endTime != null) {
+                Date endDay = Date.from(endTime.toLocalDate().plusDays(1).atStartOfDay(zone).toInstant());
+                searchTerm = new ReceivedDateTerm(ComparisonTerm.LT, endDay);
+            } else {
+                searchTerm = null;
+            }
+
+            if (searchTerm != null) {
+                messages = inbox.search(searchTerm);
+            } else {
+                messages = inbox.getMessages();
+            }
+
             if (messages.length == 0) {
                 return result;
             }
@@ -159,7 +193,7 @@ public class MailService {
                         String fromEmail = ((InternetAddress)fromAddresses[0]).getAddress();
                         item.put("from", fromEmail);
                     }
-                    item.put("sentDate", msg.getSentDate().toInstant().atOffset(ZoneOffset.UTC).toLocalDateTime());
+                    item.put("sentDate", msg.getSentDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
                     result.add(item);
                 } catch (Exception e) {
                     System.err.println("Error processing message: " + e.getMessage());

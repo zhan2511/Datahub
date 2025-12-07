@@ -5,6 +5,7 @@ package org.example.datahub.task;
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 //| status | 字符串 | 必填 (NOT NULL), CHECK IN（'已完成-Finished', '正在进行-Ongoing'） | 任务状态 |
 @Entity
 @Table(name = "tasks")
+@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE tasks SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class Task extends BaseEntity {
     @Column(name = "task_name", nullable = false)

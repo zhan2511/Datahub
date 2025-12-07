@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import org.example.datahub.common.persistent.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 //| 属性名        | 类型            | 约束     | 描述                       |
 //| ---------- | ------------- | ------ | ------------------------ |
@@ -17,6 +18,7 @@ import org.hibernate.annotations.SQLDelete;
 //| mime_type  | varchar(100)  | 非空     | 文件的 MIME 类型（如 image/png） |
 @Entity
 @Table(name = "files")
+@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE files SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class File extends BaseEntity {
     @Column(name = "owner_id", nullable = false)

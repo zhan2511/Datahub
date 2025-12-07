@@ -95,14 +95,19 @@ public class TaskController implements TasksApi {
         if (task.getStatus().equals("Finished")) {
             return;
         }
+        LocalDateTime startTime = task.getCreateTime();
+        LocalDateTime endTime = task.getDeadline();
 
         Assistant assistant = assistantService.getAssistantById(assistantId);
         mailService.init(assistant.getAssistantEmail(), assistant.getEmailAppPassword());
 
-        List<Map<String, Object>> emails = mailService.listEmails()
-            .stream()
-            .filter(email ->
-                task.getTaskName().equals(email.get("subject")) )
+        List<Map<String, Object>> emails = mailService.listEmails(startTime, endTime);
+        emails = emails.stream()
+            .filter(email -> {
+                 LocalDateTime sentDate = (LocalDateTime) email.get("sentDate");
+                 return sentDate.isAfter(startTime) && sentDate.isBefore(endTime)
+                     && task.getTaskName().equals(email.get("subject"));
+             })
             .toList();
         List<Submission> submissions = submissionService.listSubmissionsByTaskId(taskId);
         List<Teacher> teachers = teacherService.listTeachersByDeptId(task.getDeptId());
@@ -180,7 +185,11 @@ public class TaskController implements TasksApi {
         // check mailbox
         String message = "Export submissions successfully.\n";
         try {
-            checkMailbox(currentUserId, taskId);
+            Long assistantId = userService.getUserById(currentUserId).getAssistantId();
+            if (assistantId!= null) {
+                message += "Failed to check mailbox because assistantId is null.";
+            }
+            checkMailbox(assistantId, taskId);
         } catch (Exception e) {
             message += "Failed to check mailbox for new submissions: " + e.getMessage() + "\n";
 //            throw new ServiceException(
@@ -238,7 +247,15 @@ public class TaskController implements TasksApi {
 
         // check mailbox
         try {
-            checkMailbox(currentUserId, taskId);
+            Long assistantId = userService.getUserById(currentUserId).getAssistantId();
+            if (assistantId == null) {
+                throw new ServiceException(
+                    "MAILBOX_CHECK_FAILED",
+                    "Failed to check mailbox because assistantId is null",
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                );
+            }
+            checkMailbox(assistantId, taskId);
         } catch (Exception e) {
             throw new ServiceException(
                 "MAILBOX_CHECK_FAILED",
@@ -405,10 +422,6 @@ public class TaskController implements TasksApi {
             );
         }
 
-        fileService.deleteFile(taskService.getTask(taskId).getTemplateFileId());
-        taskService.deleteTask(taskId);
-        // TODO: delete submissions related
-
         String message = "Task deleted successfully.\n";
         User user = userService.getUserById(currentUserId);
         Long assistantId = user.getAssistantId();
@@ -443,6 +456,10 @@ public class TaskController implements TasksApi {
             }
         }
 
+        fileService.deleteFile(taskService.getTask(taskId).getTemplateFileId());
+        taskService.deleteTask(taskId);
+        // TODO: delete submissions related
+
         return ResponseEntity.ok(new SuccessResponseDTO()
             .success(true)
             .message(message)
@@ -463,19 +480,6 @@ public class TaskController implements TasksApi {
             );
         }
 
-        // check mailbox
-        String message = "Task detail retrieved successfully.\n";
-        try {
-            checkMailbox(currentUserId, taskId);
-        } catch (Exception e) {
-            message += "Failed to check mailbox for new submissions: " + e.getMessage() + "\n";
-//            throw new ServiceException(
-//                "MAILBOX_CHECK_FAILED",
-//                "Failed to check mailbox for new submissions: " + e.getMessage(),
-//                HttpStatus.INTERNAL_SERVER_ERROR
-//            );
-        }
-
         Department department = departmentService.getDepartment(task.getDeptId());
         return ResponseEntity.ok(new TaskDetailResponseDTO()
             .success(true)
@@ -492,7 +496,7 @@ public class TaskController implements TasksApi {
                     .deptName(department.getDeptName())
                 )
             )
-            .message(message)
+            .message("Task detail retrieved successfully.")
         );
     }
 
@@ -501,7 +505,8 @@ public class TaskController implements TasksApi {
     public ResponseEntity<TaskListResponseDTO> taskList(Integer pageNum, Integer pageSize, String status, List<Long> deptIds, String orderBy, String orderDirection) {
         Long currentUserId = JwtFilter.getCurrentUserId();
         Page<Task> taskPage = taskService.listTasks(
-            pageNum,
+            // pageNum starts from 1, but we need to start from 0
+            pageNum - 1,
             pageSize,
             currentUserId,
             deptIds,
@@ -558,7 +563,11 @@ public class TaskController implements TasksApi {
         // check mailbox
         String message = "Task teacher list retrieved successfully.\n";
         try {
-            checkMailbox(currentUserId, taskId);
+            Long assistantId = userService.getUserById(currentUserId).getAssistantId();
+            if (assistantId!= null) {
+                message += "Failed to check mailbox because assistantId is null.";
+            }
+            checkMailbox(assistantId, taskId);
         } catch (Exception e) {
             message += "Failed to check mailbox for new submissions: " + e.getMessage() + "\n";
 //            throw new ServiceException(
@@ -597,7 +606,7 @@ public class TaskController implements TasksApi {
             .filter(Objects::nonNull)
             .toList();
 
-        int pageNumValue = (pageNum != null && pageNum >= 0) ? pageNum : 0;
+        int pageNumValue = (pageNum != null && pageNum >= 1) ? pageNum-1 : 0;
         int pageSizeValue = (pageSize != null && pageSize >= 1) ? pageSize : 10;
         int total = filteredList.size();
         int fromIndex = Math.min((pageNumValue) * pageSizeValue, total);

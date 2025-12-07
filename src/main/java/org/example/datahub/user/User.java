@@ -4,6 +4,7 @@ package org.example.datahub.user;
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 //| 属性名 | 类型 | 约束 | 描述 |
 //| :--- | :---: | --- | --- |
@@ -15,6 +16,7 @@ import org.hibernate.annotations.SQLDelete;
 //| assistant_id | 整数 | 外键 (FK), 唯一 (UNIQUE), 可空 (NULLABLE) | 指向 $Assistant$ 表。UNIQUE 约束保证一个科研秘书身份只能被一个用户账户绑定。 |
 @Entity
 @Table(name = "users")
+@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE users " +
     "SET deleted_at = CURRENT_TIMESTAMP, " +
     "username = CONCAT(username, '_deleted_', id), " +

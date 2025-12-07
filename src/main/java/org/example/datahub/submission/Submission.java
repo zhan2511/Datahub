@@ -4,6 +4,7 @@ package org.example.datahub.submission;
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 //| attachment_description | 字符串 | 可空 (NULLABLE) | 教师回复的附件描述 |
 @Entity
 @Table(name = "submissions")
+@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE submissions SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class Submission extends BaseEntity {
     @Column(name = "task_id", nullable = false)

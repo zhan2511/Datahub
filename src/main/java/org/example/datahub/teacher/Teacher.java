@@ -4,6 +4,7 @@ package org.example.datahub.teacher;
 import jakarta.persistence.*;
 import org.example.datahub.common.persistent.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 //| 属性名 | 类型 | 约束 | 描述 |
 //| :--- | :---: | --- | --- |
@@ -14,6 +15,7 @@ import org.hibernate.annotations.SQLDelete;
 //| dept_id | 整数 | 外键 (FK) | 指向 $Department$ 表 |
 @Entity
 @Table(name = "teachers")
+@Where(clause = "deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE teachers " +
     "SET deleted_at = CURRENT_TIMESTAMP, " +
     "employee_id = CONCAT(employee_id, '_deleted_', id), " +

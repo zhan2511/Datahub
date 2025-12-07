@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskService {
@@ -101,6 +102,13 @@ public class TaskService {
         int pageNum = (page_num != null && page_num >= 0) ? page_num : 0;
         int pageSize = (page_size != null && page_size >= 1) ? page_size : 10;
         String orderBy = (sort_by != null && (sort_by.equals("deadline") || sort_by.equals("task_name") || sort_by.equals("create_time"))) ? sort_by : "id";
+        Map<String, String> sortMap = Map.of(
+            "id", "id",
+            "task_name", "taskName",
+            "create_time", "createTime",
+            "deadline", "deadline"
+        );
+        orderBy = sortMap.getOrDefault(orderBy, "id");
         String orderDirection = (order != null && (order.equals("asc") || order.equals("desc"))) ? order : "asc";
         Pageable pageable = PageRequest.of(pageNum, pageSize, orderDirection.equals("desc")? Sort.by(orderBy).descending() : Sort.by(orderBy).ascending());
         if (status == null && (deptIds == null || deptIds.isEmpty())) {

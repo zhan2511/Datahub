@@ -120,7 +120,7 @@ public class MailTest {
             "Body C"
         );
 
-        List<Map<String, Object>> emails = mailService.listEmails();
+        List<Map<String, Object>> emails = mailService.listEmails(null, null);
 
         assertEquals(3, emails.size());
 
